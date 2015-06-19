@@ -1,4 +1,10 @@
 --[[
+    Script to maximize mpv on start or fullscreen exit on Windows O/S using nircmd.
+    Requires nircmdc.exe in PATH
+
+    https://github.com/kevinlekiller/mpv_scripts
+--]]
+--[[
     Copyright (C) 2015  kevinlekiller
 
     This program is free software; you can redistribute it and/or
@@ -15,11 +21,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     https://www.gnu.org/licenses/gpl-2.0.html
---]]
-
---[[
-	Script to maximize mpv on start or fullscreen exit on Windows O/S using nircmd.
-	Requires nircmdc.exe in PATH
 --]]
 
 -- This is better than os.execute since it doesn't pop up command prompts.

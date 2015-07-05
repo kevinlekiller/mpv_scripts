@@ -157,9 +157,8 @@ function setSpeedOSD(original_drr, drr, fps)
         mp.set_property("speed", speed)
     end
 
-    local mp_speed = mp.get_property("speed")
-    local new_video_fps = fps * mp_speed
-    local new_playback_fps = relative_fps * mp_speed
+    local new_video_fps = fps * speed
+    local new_playback_fps = relative_fps * speed
 
     osdAppend(osdBold("Original monitor refresh rate") .. osdTab(2)  .. original_drr             .. "Hz")
     osdAppend(osdBold("Current  monitor refresh rate") .. osdTab(2)  .. drr                      .. "Hz")
@@ -168,8 +167,7 @@ function setSpeedOSD(original_drr, drr, fps)
     osdAppend(osdBold("Original video playback fps")   .. osdTab(6)  .. relative_fps             .. "fps")
     osdAppend(osdBold("Current  video playback fps")   .. osdTab(6)  .. new_playback_fps         .. "fps")
     osdAppend(osdBold("Original mpv speed setting")    .. osdTab(6)  .. original_mp_speed        .. "x")
-    osdAppend(osdBold("Current  mpv speed setting")    .. osdTab(6)  .. mp_speed                 .. "x")
-    osdAppend(osdBold("Ideal       mpv speed setting") .. osdTab(6)  .. speed                    .. "x")
+    osdAppend(osdBold("Current  mpv speed setting")    .. osdTab(6)  .. speed                    .. "x")
 end
 
 --[[

@@ -1,9 +1,7 @@
 --[[
-    Disables video scaling if the video is close to screen resolution.
-    If a video is for example 1916x1038, scaling will the disabled.
+    Disables video scaling if video resolution same or slightly lower than screen resolution.
+    Enables video scaling if video resolution is higher or much lower than screen resolution.
     Change settings below.
-
-    https://github.com/kevinlekiller/mpv_scripts
 --]]
 --[[
     Copyright (C) 2015  kevinlekiller
@@ -29,25 +27,28 @@
 -----------------------------------------------------------------------------------------
 -- All 4 of the following must be "true" for video scaling to be disabled.
 local settings = {
-    -- Videos with width under this will have scaling turned off. Set it to the monitor pixel width.
+    -- Set to monitor pixel width. Videos with width higher than this have scaling on.
     max_width = 1920,
-    -- Videos with height under this will have scaling turned off. Set it to the monitor pixel height.
+    -- Set to monitor pixel height. Videos with height higher than this have scaling on.
     max_height = 1080,
-    -- Videos with width over this will have scaling turned off.
-    min_width = 1850,
-    -- Videos with height over this will have scaling turned off.
+    -- Videos with width between this and max_width will have scaling off.
+    min_width = 1800,
+    -- Videos with height between this and max_height will have scaling off 
+    -- Can be left low, to allow wide aspect videos.
     min_height = 1
 }
 -----------------------------------------------------------------------------------------
 ----------------------------------- Settings end ----------------------------------------
 -----------------------------------------------------------------------------------------
-
+local display = {}
 function main()
+    -- Get video dimensions.
     local video = {
         width = mp.get_property("video-params/dw"),
         height = mp.get_property("video-params/dh")
     }
 
+    -- Check if we got good values.
     if (video.width == "nil property unavailable" or video.height == "nil property unavailable") then
         return 1
     end
@@ -56,29 +57,49 @@ function main()
     video.height = tonumber(video.height)
 
     if (video.width == nil or video.height == nil or video.width < 1 or video.height < 1) then
-        return 2
+        return 1
+    end
+
+    local fs = mp.get_property("fullscreen")
+    if (fs == nil) then
+        fs = "no"
+    end
+
+    local wscale = mp.get_property("window-scale")
+        if (wscale == nil) then
+            wscale = 1
+        end
+
+    display.width = settings.max_width
+    display.height = settings.max_height
+    if (fs == "yes") then
+        -- Video width same as monitor and video height equal or smaller than monitor - disable scaling.
+        if (video.width == display.width and video.height <= display.height) then
+            mp.set_property("video-unscaled", "yes")
+            return 0
+        end
+        
+        -- Video height same as monitor and video width equal or smaller than monitor - disable scaling.
+        if (video.height == display.height and video.width <= display.width) then
+            mp.set_property("video-unscaled", "yes")
+            return 0
+        end
+    else
+        -- We need to alter the max / min display size based on the scale of the window.
+        display.width = settings.max_width * wscale
+        display.height = settings.max_height * wscale
     end
 
     -- Video is bigger than display resolution - enable scaling.
-    if (video.width > settings.max_width or video.height > settings.max_height) then
+    if (video.width > display.width or video.height > display.height) then
         mp.set_property("video-unscaled", "no")
-        return 3
+        return 1
     end
 
     -- Video is smaller than threshold settings - enable scaling.
-    if (video.width < settings.min_width or video.height < settings.min_height) then
+    if ((settings.min_width >= display.width and video.width < settings.min_width) or (settings.min_height >= display.height and video.height < settings.min_height)) then
         mp.set_property("video-unscaled", "no")
-        return 4
-    end
-
-    -- Video is bigger than mpv window - enable scaling.
-    local fs = mp.get_property("fullscreen")
-    local wscale = mp.get_property("window-scale")
-    if (fs ~= nil and fs == "no" and wscale ~= nil) then
-        if (video.width > (settings.max_width * wscale) or video.height > (settings.max_height * wscale)) then
-            mp.set_property("video-unscaled", "no")
-            return 5
-        end
+        return 1
     end
 
     -- Video is not too small or too big - disable scaling.
@@ -86,6 +107,6 @@ function main()
     return 0
 end
 
-loaded = mp.register_event("file-loaded", main)
+mp.register_event("file-loaded", main)
 mp.observe_property("window-scale", "native", main)
 mp.observe_property("fullscreen", "native", main)

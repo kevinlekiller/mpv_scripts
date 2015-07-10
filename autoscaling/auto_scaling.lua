@@ -40,7 +40,7 @@ local settings = {
 -----------------------------------------------------------------------------------------
 ----------------------------------- Settings end ----------------------------------------
 -----------------------------------------------------------------------------------------
-local debug = false
+local debug = true
 local display = {}
 function main()
     local status = run()
@@ -92,27 +92,33 @@ function run()
             return 4
         end
     else
+        -- If the window scale is 1, ignore everything, disable scaling.
+        if (wscale == "1.000000") then
+            mp.set_property("video-unscaled", "yes")
+            return 5
+        end
+        
         -- We need to alter the max / min display size based on the scale of the window.
         display.width = settings.max_width * wscale
         display.height = settings.max_height * wscale
-        
+
         -- New window size is smaller than thresholds. - enable scaling.
         if (display.width < settings.min_width or display.height < settings.min_height) then
             mp.set_property("video-unscaled", "no")
-            return 5
+            return 6
         end
     end
 
     -- Video is bigger than display resolution - enable scaling.
     if (video.width > display.width or video.height > display.height) then
         mp.set_property("video-unscaled", "no")
-        return 6
+        return 7
     end
 
     -- Video is smaller than threshold settings - enable scaling.
     if (video.width < settings.min_width or video.height < settings.min_height) then
         mp.set_property("video-unscaled", "no")
-        return 7
+        return 8
     end
 
     -- Video is not too small or too big - disable scaling.

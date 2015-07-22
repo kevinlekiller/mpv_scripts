@@ -483,6 +483,8 @@ function revertDrr(event)
     if (exit_drr == 0) then
         return
     end
+    -- Round
+    exit_drr = exit_drr + 0.5 - (exit_drr + 0.5) % 1
     if (config.use_xrandr == true) then
         os.execute(
             "xrandr -s " ..

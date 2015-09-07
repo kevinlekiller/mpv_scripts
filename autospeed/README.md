@@ -7,6 +7,7 @@
 #####Notes:
 
 * Possibly a better solution than this script is to use `--vo=opengl:interpolation:tscale=oversample`, which I'm currently using. See the [mpv wiki for info](https://github.com/mpv-player/mpv/wiki/Interpolation).
+* Also see [this mpv commit](https://github.com/mpv-player/mpv/commit/031555fbe6cfdf6d0db3b0a5a316dd55efd75846) about `--video-sync=display-resample`.
 * Works on *nix and Windows operating systems.
 * You put these files (auto_speed.lua and auto_speed_config.lua) in the mpv/scripts folder, see the [mpv man page](https://github.com/mpv-player/mpv/blob/master/DOCS/man/mpv.rst#files) for the correct path.
 * Download links: [auto_speed.lua](https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed/auto_speed.lua) | [auto_speed_config.lua.example](https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed/auto_speed_config.lua.example)

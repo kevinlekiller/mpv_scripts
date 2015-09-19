@@ -1,6 +1,6 @@
 module("config")
 --[[
-    Copy auto_speed_config.lua.example to auto_speed_config.lua and edit the options below.
+    Copy config.lua.example to config.lua and edit the options below.
 
     https://github.com/kevinlekiller/mpv_scripts
 --]]
@@ -35,17 +35,19 @@ use_xrandr = false
 use_nircdm = false
 -- Colour bit depth to set the screen to when using nircmd.
 nircmd_bit_depth = "32"
+-- Set to the display you want. Find them with this command: xrandr | grep -Poi '^.+connected'
+xrandr_display = "DP1"
 -- Set your display resolution.
 display_width  = "1920"
 display_height = "1080"
--- Supported refresh rates by your monitor, set to true / false based on your monitor.
+-- Supported refresh rates by your monitor, set to false or the mode (xrandr --verbose) based on your monitor.
 srr = {
     _24  = false,
     _25  = false,
     _30  = false,
     _48  = false,
     _50  = false,
-    _60  = true,
+    _60  = "0x48",
     _72  = false,
     _96  = false,
     _100 = false,

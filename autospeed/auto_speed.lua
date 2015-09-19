@@ -75,6 +75,7 @@ if (getSetConfig() == false) then
         use_nircdm = false,
         use_ffprobe = false,
         nircmd_bit_depth = "32",
+        xrandr_display = "DP1",
         display_width  = "1920",
         display_height = "1080",
         srr = {
@@ -83,7 +84,7 @@ if (getSetConfig() == false) then
             _30  = false,
             _48  = false,
             _50  = false,
-            _60  = true,
+            _60  = "0x48",
             _72  = false,
             _96  = false,
             _100 = false,
@@ -389,76 +390,75 @@ end
     @return int
 --]]
 function getAndSetRefreshRate(fps)
-    local drr = 0
     if (config.use_xrandr == false and config.use_nircdm == false) then
-        return drr
+        return 0
     elseif ((fps >= 29 and fps <= 31) or (fps >= 59 and fps <= 61)) then
-        if (config.srr._120 == true) then
-            drr = setRefreshRate(120)
-        elseif (config.srr._60 == true) then
-            drr = setRefreshRate(60)
-        elseif (config.srr._30 == true) then
-            drr = setRefreshRate(30)
+        if (config.srr._120 ~= false) then
+            return setRefreshRate(120, config.srr._120)
+        elseif (config.srr._60 ~= false) then
+            return setRefreshRate(60, config.srr._60)
+        elseif (config.srr._30 ~= false) then
+            return setRefreshRate(30, config.srr._30)
 
         -- Not exact, but close.
-        elseif (config.srr._50 == true) then
-            drr = setRefreshRate(50)
+        elseif (config.srr._50 ~= false) then
+            return setRefreshRate(50, config.srr._50)
         end
     elseif ((fps >= 23 and fps <= 24.5) or (fps >= 47 and fps <= 49)) then
-        if (config.srr._144 == true) then
-            drr = setRefreshRate(144)
-        elseif (config.srr._120 == true) then
-            drr = setRefreshRate(120)
-        elseif (config.srr._96 == true) then
-            drr = setRefreshRate(96)
-        elseif (config.srr._72 == true) then
-            drr = setRefreshRate(72)
-        elseif (config.srr._48 == true) then
-            drr = setRefreshRate(48)
-        elseif (config.srr._24 == true) then
-            drr = setRefreshRate(24)
+        if (config.srr._144 ~= false) then
+            return setRefreshRate(144, config.srr._144)
+        elseif (config.srr._120 ~= false) then
+            return setRefreshRate(120, config.srr._120)
+        elseif (config.srr._96 ~= false) then
+            return setRefreshRate(96, config.srr._96)
+        elseif (config.srr._72 ~= false) then
+            return setRefreshRate(72, config.srr._72)
+        elseif (config.srr._48 ~= false) then
+            return setRefreshRate(48, config.srr._48)
+        elseif (config.srr._24 ~= false) then
+            return setRefreshRate(24, config.srr._24)
 
         -- Not exact matches but close.
-        elseif (config.srr._50 == true) then
-            drr = setRefreshRate(50)
-        elseif (config.srr._25 == true) then
-            drr = setRefreshRate(25)
+        elseif (config.srr._50 ~= false) then
+            return setRefreshRate(50, config.srr._50)
+        elseif (config.srr._25 ~= false) then
+            return setRefreshRate(25, config.srr._25)
         end
     elseif ((fps >= 24.6 and fps <= 25.5) or (fps >= 49.1 and fps <= 51)) then
-        if (config.srr._100 == true) then
-            drr = setRefreshRate(100)
-        elseif (config.srr._50 == true) then
-            drr = setRefreshRate(50)
-        elseif (config.srr._25 == true) then
-            drr = setRefreshRate(25)
+        if (config.srr._100 ~= false) then
+            return setRefreshRate(100, config.srr._100)
+        elseif (config.srr._50 ~= false) then
+            return setRefreshRate(50, config.srr._50)
+        elseif (config.srr._25 ~= false) then
+            return setRefreshRate(25, config.srr._25)
 
         -- Not exact matches but close.
-        elseif (config.srr._120 == true) then
-            drr = setRefreshRate(120)
-        elseif (config.srr._24 == true) then
-            drr = setRefreshRate(24)
+        elseif (config.srr._120 ~= false) then
+            return setRefreshRate(120, config.srr._120)
+        elseif (config.srr._24 ~= false) then
+            return setRefreshRate(24, config.srr._24)
         end
     end
-    return drr
+    return 0
 end
 
 --[[
     Sets monitor refresh rate using xrandr.
     Credits to lvml @ https://github.com/lvml/mpv-plugin-xrandr/blob/master/xrandr.lua#L228
 
-    @param int drr Display refresh rate.
-    @return int
+    @param string drr  Display refresh rate.
+    @param string mode Xrandr mode.
 --]]
-function setRefreshRate(drr)
+function setRefreshRate(drr, mode)
     local command = {}
     command["cancellable"] = "false"
     if (config.use_xrandr == true) then
         command["args"] = {}
         command["args"][1] = "xrandr"
-        command["args"][2] = "-s"
-        command["args"][3] = config.display_width .. "x" .. config.display_height
-        command["args"][4] = "-r"
-        command["args"][5] = tostring(drr)
+        command["args"][2] = "--output"
+        command["args"][3] = tostring(config.xrandr_display)
+        command["args"][4] = "--mode"
+        command["args"][5] = tostring(mode)
         mputils.subprocess(command)
     end
     if (config.use_nircdm == true) then

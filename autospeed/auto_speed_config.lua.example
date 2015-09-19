@@ -1,6 +1,6 @@
 module("config")
 --[[
-    Copy config.lua.example to config.lua and edit the options below.
+    Copy auto_speed_config.lua.example to auto_speed_config.lua and edit the options below.
 
     https://github.com/kevinlekiller/mpv_scripts
 --]]

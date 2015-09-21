@@ -30,6 +30,9 @@ module("config")
 -- Enable or disable usage of xrandr to change display refresh rate.
 -- Disable if your operating system does not have xrandr.
 use_xrandr = false
+-- Use xvidtune to calculate accurate monitor refresh rate?
+-- Requires xvidtune in PATH (on Arch Linux, the package name is xorg-xvidtune).
+use_xvidtune = false
 -- Enable or disable usage of nircmd to change display refresh rate.
 -- Windows only. Requires nircmdc.exe in PATH.
 use_nircdm = false

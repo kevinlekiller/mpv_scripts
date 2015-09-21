@@ -29,6 +29,9 @@ local osd = {
     output = ""
 }
 local exit_drr = 0
+-- Cache of xvidtune calculated refresh rates.
+local drrMappings = {}
+local closestDrr = 0
 
 --[[
     Check if a file exists.
@@ -73,6 +76,7 @@ if (getSetConfig() == false) then
     config = {
         use_xrandr = false,
         use_nircdm = false,
+        use_xvidtune = false,
         use_ffprobe = false,
         nircmd_bit_depth = "32",
         xrandr_display = "DP1",
@@ -135,6 +139,9 @@ function main()
             os.execute("ping -n 1 localhost > NUL")	
         end
         drr = tonumber(mp.get_property("display-fps"))
+    end
+    if (config.use_xvidtune == true and closestDrr ~= 0 and drrMappings[closestDrr] ~= nil) then
+        drr = drrMappings[closestDrr] 
     end
 
     setSpeedOSD(original_drr, drr, fps)
@@ -446,10 +453,11 @@ end
     Sets monitor refresh rate using xrandr.
     Credits to lvml @ https://github.com/lvml/mpv-plugin-xrandr/blob/master/xrandr.lua#L228
 
-    @param string drr  Display refresh rate.
+    @param int    drr  Display refresh rate.
     @param string mode Xrandr mode.
 --]]
 function setRefreshRate(drr, mode)
+    closestDrr = drr
     local command = {}
     command["cancellable"] = "false"
     if (config.use_xrandr == true) then
@@ -471,7 +479,43 @@ function setRefreshRate(drr, mode)
         command["args"][6] = tostring(drr)
         mputils.subprocess(command)
     end
-    return drr
+    return getXvidtuneRefreshRate()
+end
+
+--[[
+    Fetch modeline of the display and calculate an accurate refresh rate from it.
+    TODO: Multiple monitor support?
+--]]
+function getXvidtuneRefreshRate()
+    if (config.use_xvidtune ~= true) then
+        return closestDrr
+    end
+    if (drrMappings[closestDrr] ~= nil) then
+        return drrMappings[closestDrr]
+    end
+    local command = {}
+    command["cancellable"] = "false"
+    command["args"] = {}
+    command["args"][1] = "xvidtune"
+    command["args"][2] = "-show"
+    local output = mputils.subprocess(command)
+    if (output == nil or output.error ~= nil) then
+        drrMappings[closestDrr] = closestDrr
+        return closestDrr
+    end
+    local pixClock, totalWidth, totalHeight = string.match(output.stdout, '^%s*"[%dx]+"%s+([%d.]+)%s+%d+%s+%d+%s+%d+%s+(%d+)%s+%d+%s+%d+%s+%d+%s+(%d+)%s+')
+    if (pixClock == nil or totalWidth == nil or totalHeight == nil) then
+        drrMappings[closestDrr] = closestDrr
+        return closestDrr 
+    end
+    local tempDrr = ((pixClock * 1000000) / (totalWidth * totalHeight))
+    -- The refresh rate from mpv should be close to the one from the modeline, ignore modeline one if it's too different.
+    if (math.abs((tempDrr - closestDrr)) >= 2) then
+        drrMappings[closestDrr] = closestDrr
+        return closestDrr
+    end
+    drrMappings[closestDrr] = tempDrr
+    return drrMappings[closestDrr]
 end
 
 --[[

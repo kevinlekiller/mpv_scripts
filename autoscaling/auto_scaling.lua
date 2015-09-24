@@ -42,7 +42,7 @@ local settings = {
     min_width = false,
     osd = {
         -- Enable OSD?
-        enabled = true,
+        enabled = false,
         -- How much time in seconds will the OSD message be on screen.
         time = 5,
         -- Keyboard key to print OSD message.

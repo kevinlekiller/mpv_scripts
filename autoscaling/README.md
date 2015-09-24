@@ -1,7 +1,12 @@
 # autoscaling
 
-Disables scaling when a video is close to a target resolution.
+Disable video scaling if video is slightly smaller than window size.
 
-Edit options in the script.
+For this script to function properly, you need to either be fullscreen or have the "no-border" option
+in addition to disabling any options altering the size of the window when not in fullscreen,
+otherwise the calculations may be off. If you do not have the "no-border" option enabled, the script
+will still function when you enter fullscreen mode, it will be disabled when outside of fullscreen.
+
+Edit options in the script @ line ~35.
 
 Download link for the script: https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autoscaling/auto_scaling.lua

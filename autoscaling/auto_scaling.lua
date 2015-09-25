@@ -173,7 +173,7 @@ function check_scaling()
             global.debug ..
             "within acceotable range of thresholds (" .. min.width ..
             "x" .. min.height .. ") and window size (" ..
-            window.width .. "x" .. window.height .. "), disable scaling. "
+            window.width .. "x" .. window.height .. "), disable scaling."
         )
     end
     return "yes"

@@ -62,11 +62,13 @@ local global = {
         stop = mp.get_property_osd("osd-ass-cc/1")
     },
     debug = "",
-    require_printed = false
+    require_printed = false,
+    fullscreen = "no"
 }
 
 function main()
-    if (mp.get_property("fullscreen") == "no" and mp.get_property("border") == "yes") then
+    global.fullscreen = mp.get_property("fullscreen")
+    if (global.fullscreen == "no" and mp.get_property("border") == "yes") then
         global.scale = mp.get_property("video-unscaled")
         global.debug = "Error: This script requires '--fullscreen' or '--no-border' to function correctly."
         if (global.require_printed == false) then
@@ -119,6 +121,10 @@ function check_scaling()
         global.debug = "Unable to get video or window dimensions."
         return nil
     end
+    
+    local scale = tonumber(mp.get_property("window-scale"))
+    window.width = (window.width * scale)
+    window.height = (window.height * scale)
 
     -- Minimum acceptable values.
     local min = {
@@ -126,12 +132,15 @@ function check_scaling()
         height = (window.height * settings.deviation)
     }
 
+    if (settings.debug == true) then
+        global.debug = "Video (" .. video.width .. "x" .. video.height .. ") is "
+    end
+
     if (video.width > window.width or video.height > window.height) then
         if (settings.debug == true) then
             global.debug = (
-                "Video (" .. video.width .. "x" .. video.height .. 
-                ") is larger than window size (" .. window.width .. 
-                "x" .. window.height .."), enable scaling."
+                global.debug .. "larger than window size (" ..
+                window.width .. "x" .. window.height .."), enable scaling."
             )
         end
         return "no"
@@ -140,9 +149,8 @@ function check_scaling()
     if (settings.min_width == true and video.width < min.width) then
         if (settings.debug == true) then
             global.debug = (
-                "Video width of " .. video.width ..
-                " is less than threshold value of " ..
-                min.width .. ", enable scaling."
+                global.debug .. "less than threshold value of (" ..
+                min.width .. "x" .. min_height .. "), enable scaling."
             )
         end
         return "no" 
@@ -152,9 +160,8 @@ function check_scaling()
     if (video.height < min.height) then
         if (settings.debug == true) then
             global.debug = (
-                "Video height of " .. video.height ..
-                " is less than threshold value of " ..
-                min.height .. ", enable scaling."
+                global.debug .. "less than threshold value of (" ..
+                min.width .. "x" .. min.height .. "), enable scaling."
             )
         end
         return "no"
@@ -163,10 +170,10 @@ function check_scaling()
     -- Video is larger than threshold values and smaller than window size, disable scaling.
     if (settings.debug == true) then
         global.debug = (
-            "Video (" .. video.width .. "x" .. video.height ..
-            ") is within acceotable range of thresholds (" .. min.width ..
+            global.debug ..
+            "within acceotable range of thresholds (" .. min.width ..
             "x" .. min.height .. ") and window size (" ..
-            window.width .. "x" .. window.height .. "), disable scaling."
+            window.width .. "x" .. window.height .. "), disable scaling. "
         )
     end
     return "yes"

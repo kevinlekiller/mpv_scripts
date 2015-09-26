@@ -44,6 +44,10 @@ xrandr_display = "DP1"
 display_width  = "1920"
 display_height = "1080"
 -- Supported refresh rates by your monitor, set to false or the mode (xrandr --verbose) based on your monitor.
+-- If you add custom timings using xrandr, it's recommended to use the left part of the mode,
+-- because the right part will change every time you add it back.
+-- For example: 1920x1080_72.00 (0x129), you would add "1920x1080_72.00"
+-- If you modified your edid, using the right part "0x129" should be fine, since that should not change.
 srr = {
     _24  = false,
     _25  = false,

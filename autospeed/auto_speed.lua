@@ -214,7 +214,7 @@ end
 --]]
 function getFfprobeFps()
     -- Get video file name.
-    local video = mp.get_property("working-directory") .. "/" .. mp.get_property("filename")
+    local video = mp.get_property("stream-path")
     if (fileExists(video) == false) then
         return 0
     end

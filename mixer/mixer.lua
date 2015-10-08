@@ -91,8 +91,6 @@ local map = {
         You can do this easily by playing a stereo file, then you set everything to 0
         and change one of the 0's to 1 and see which speaker plays
         (for example, on a 6 speaker system: "1,0,0,0,0,0", then note which speaker plays, then try "0,1,0,0,0,0" and so on). 
-    
-    
     --]]
     ["FL"]   = "1,0",
     ["FR"]   = "0,1",

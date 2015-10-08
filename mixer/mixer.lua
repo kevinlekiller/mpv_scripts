@@ -59,10 +59,41 @@ LFE2           low frequency 2
 --]]
 
 local map = {
-    -- On 2 channels, the first number is the volume for the left speaker, second number is volume to the right speaker.
-    -- So if you do 1,0 the left speaker will have 100% volume of the specified channel, and the right channel will have 0%.
-    -- You need to experiment if you have more than 2 channels to find which speaker corresponds to which number.
-    -- If you have 3 channels for example, you would set FL to "1,0,0" and set the "CHANS" to "3". You'd also want to set the LFE to 0,0,1.
+    --[[
+        ["INPUT CHANNEL"] = "OUTPUT SPEAKERS/VOLUMES"
+        
+        For example, ["FL"] = "1,0"
+        FL is the front left channel in the audio track.
+        The 1 means 100% volume to the first output speaker (the left speaker).
+        The 0 means 0% volume (muted) to the second output speaker (the right speaker).
+    
+        If we were to set ["FL"] to "0,1", then we would send the front left channel
+        to the right speaker.
+    
+        If we were to set ["FL"] to "0,0" we would mute the front left channel.
+    
+        If we were to set ["FL"] "1,1" we would send the front left channel at
+        100% volume to both the left and right speakers.
+    
+        We can also use values between 0 and 1.
+    
+        ["FL"] = "0.3,0.5"
+        This would send the front left channel at 30% volume to the left speaker
+        and 50% to the right speaker.
+    
+        If you have more than 2 speakers, then you set the "CHANS" variable accordingly.
+    
+        If you have 3 channels for example (2 speakers and a subwoofer), then you set
+        "CHANS" to 3 and change all the "INPUT CHANNELS" accordingly,
+        ["FL"] = "1,0,0"   ["FR"] = "0,1,0"   ["LFE"] = "0,0,1" and so on.
+    
+        You might have to experiment to figure out which speaker matches which number.
+        You can do this easily by playing a stereo file, then you set everything to 0
+        and change one of the 0's to 1 and see which speaker plays
+        (for example, on a 6 speaker system: "1,0,0,0,0,0", then note which speaker plays, then try "0,1,0,0,0,0" and so on). 
+    
+    
+    --]]
     ["FL"]   = "1,0",
     ["FR"]   = "0,1",
     ["FC"]   = "0.5,0.5",

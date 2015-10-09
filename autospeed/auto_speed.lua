@@ -536,8 +536,6 @@ function revertDrr(event)
     if (_global.exit_drr == 0) then
         return
     end
-    -- Round
-    _global.exit_drr = _global.exit_drr + 0.5 - (_global.exit_drr + 0.5) % 1
     if (config.use_xrandr == true) then
         os.execute(
             "xrandr --output " ..
@@ -546,6 +544,8 @@ function revertDrr(event)
         )
     end
     if (config.use_nircdm == true) then
+        -- Round
+         _global.exit_drr = _global.exit_drr + 0.5 - (_global.exit_drr + 0.5) % 1
         os.execute(
             "START /B nircmdc setdisplay " ..
             config.display_width .. " " ..

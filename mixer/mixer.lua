@@ -1,5 +1,5 @@
 --[[
-    Remix audio based on audio channels of current playing track.
+    Mixes audio based on audio channels of current playing track.
     By default this will mix to stereo.
     Change "map" variables below to alter number of output channels / input volumes.
     Uses mpv's "pan" filter http://mpv.io/manual/master/#audio-filters-pan

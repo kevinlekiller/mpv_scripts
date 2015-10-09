@@ -220,7 +220,8 @@ function getLayout()
 end
 
 function getAf()
-    local first, last = string.match(_global.startAf, '(.*)pan=.*matrix=[%%%d,]+(.*)')
+    -- lavrresample=normalize=yes,pan=channels=1:matrix=%7%0.5,0.5,volume=softclip=
+    local first, last = string.match(_global.startAf, '(.*)pan=.*matrix=[%%%d,.]+(.*)')
     if (first == nil or last == nil) then
         _global.baseAf = _global.startAf
         return
@@ -233,7 +234,7 @@ function getAf()
             first = string.sub(first, 1, -2)
         end
     end
-    _global.baseAf = ""
+    _global.baseAf = first .. last
 end
 
 function getPan()
@@ -251,7 +252,7 @@ end
 function setPan()
     local temp = _global.panLayouts[_global.layout]
     if (_global.baseAf ~= "") then
-        temp = temp .. _global.baseAf
+        temp = temp .. "," .. _global.baseAf
     end
     _global.currentAf = temp
     if (_global.off == false) then

@@ -22,16 +22,17 @@
     https://www.gnu.org/licenses/gpl-2.0.html
 --]]
 
-mputils = require 'mp.utils'
-local osd = {
-    string_start = mp.get_property_osd("osd-ass-cc/0"),
-    string_end = mp.get_property_osd("osd-ass-cc/1"),
-    output = ""
+local _global = {
+    closestDrr = 0,
+    drrMappings = {}, -- Cache of xvidtune calculated refresh rates.
+    exit_drr = 0,
+    osd = {
+        string_start = mp.get_property_osd("osd-ass-cc/0"),
+        string_end = mp.get_property_osd("osd-ass-cc/1"),
+        output = ""
+    },
+    utils = require 'mp.utils'
 }
-local exit_drr = 0
--- Cache of xvidtune calculated refresh rates.
-local drrMappings = {}
-local closestDrr = 0
 
 --[[
     Check if a file exists.
@@ -95,6 +96,7 @@ if (getSetConfig() == false) then
             _120 = false,
             _144 = false
         },
+        exit_drr = "0x48",
         thresholds = {
             min_speed = 0.9,
             max_speed = 1.1
@@ -113,7 +115,7 @@ end
 --]]
 function main()
     -- Reset this - for when a new video is loaded.
-    osd.output = ""
+    _global.osd.output = ""
     local fps = tonumber(mp.get_property("fps"))
     if (checkInt(fps) == false) then
         print("Error: Could not properly detect video frame rate.")
@@ -126,7 +128,7 @@ function main()
         return 2
     end
 
-    exit_drr = original_drr
+    _global.exit_drr = original_drr
     fps = getMoreAccurateFrameRate(fps)
     wanted_drr = getAndSetRefreshRate(fps)
 
@@ -140,8 +142,8 @@ function main()
         end
         drr = tonumber(mp.get_property("display-fps"))
     end
-    if (config.use_xvidtune == true and closestDrr ~= 0 and drrMappings[closestDrr] ~= nil) then
-        drr = drrMappings[closestDrr] 
+    if (config.use_xvidtune == true and _global.closestDrr ~= 0 and _global.drrMappings[_global.closestDrr] ~= nil) then
+        drr = _global.drrMappings[_global.closestDrr] 
     end
 
     setSpeedOSD(original_drr, drr, fps)
@@ -219,26 +221,28 @@ function getFfprobeFps()
         return 0
     end
 
-    local command = {}
-    command["cancellable"] = "false"
-    command["args"] = {}
-    command["args"][1] = "ffprobe"
-    command["args"][2] = "-select_streams"
-    command["args"][3] = "v"
-    command["args"][4] = "-v"
-    command["args"][5] = "quiet"
-    command["args"][6] = "-show_streams"
-    command["args"][7] = "-show_entries"
-    command["args"][8] = "stream=avg_frame_rate,r_frame_rate"
-    command["args"][9] = "-print_format"
-    command["args"][10] = "json"
-    command["args"][11] = video
-    local output = mputils.subprocess(command)
+    local command = {
+        ["cancellable"] = "false",
+        ["args"] = {
+            [1] = "ffprobe",
+            [2] = "-select_streams",
+            [3] = "v",
+            [4] = "-v",
+            [5] = "quiet",
+            [6] = "-show_streams",
+            [7] = "-show_entries",
+            [8] = "stream=avg_frame_rate,r_frame_rate",
+            [9] = "-print_format",
+            [10] = "json",
+            [11] = video
+        }
+    }
+    local output = _global.utils.subprocess(command)
     if (output == nil) then
         return 0
     end
 
-    local json = mputils.parse_json(output.stdout)
+    local json = _global.utils.parse_json(output.stdout)
     -- Make sure we got data, and avg_frame_rate is the same as r_frame_rate, otherwise the video is not constant fps.
     if (json == nil or json == error or json.streams[1].avg_frame_rate ~= json.streams[1].r_frame_rate) then
         return 0
@@ -307,7 +311,7 @@ end
     @void
 --]]
 function osdAppend(text)
-    osd.output = osd.output .. text .. "\\N"
+    _global.osd.output = _global.osd.output .. text .. "\\N"
 end
 
 --[[
@@ -316,7 +320,7 @@ end
 --]]
 function osdEcho()
     if (config.osd_displayed == true) then
-        mp.osd_message(osd.string_start .. osd.output .. osd.string_end, config.osd_time)
+        mp.osd_message(_global.osd.string_start .. _global.osd.output .. _global.osd.string_end, config.osd_time)
     end
 end
 
@@ -457,27 +461,30 @@ end
     @param string mode Xrandr mode.
 --]]
 function setRefreshRate(drr, mode)
-    closestDrr = drr
-    local command = {}
-    command["cancellable"] = "false"
+    _global.closestDrr = drr
+    local command = {
+        ["cancellable"] = "false"
+    }
     if (config.use_xrandr == true) then
-        command["args"] = {}
-        command["args"][1] = "xrandr"
-        command["args"][2] = "--output"
-        command["args"][3] = tostring(config.xrandr_display)
-        command["args"][4] = "--mode"
-        command["args"][5] = tostring(mode)
-        mputils.subprocess(command)
+        command["args"] = {
+            [1] = "xrandr",
+            [2] = "--output",
+            [3] = tostring(config.xrandr_display),
+            [4] = "--mode",
+            [5] = tostring(mode)
+        }
+        _global.utils.subprocess(command)
     end
     if (config.use_nircdm == true) then
-        command["args"] = {}
-        command["args"][1] = "nircmdc"
-        command["args"][2] = "setdisplay"
-        command["args"][3] = config.display_width
-        command["args"][4] = config.display_height
-        command["args"][5] = config.nircmd_bit_depth
-        command["args"][6] = tostring(drr)
-        mputils.subprocess(command)
+        command["args"] = {
+            [1] = "nircmdc",
+            [2] = "setdisplay",
+            [3] = config.display_width,
+            [4] = config.display_height,
+            [5] = config.nircmd_bit_depth,
+            [6] = tostring(drr)
+        }
+        _global.utils.subprocess(command)
     end
     return getXvidtuneRefreshRate()
 end
@@ -488,34 +495,36 @@ end
 --]]
 function getXvidtuneRefreshRate()
     if (config.use_xvidtune ~= true) then
-        return closestDrr
+        return _global.closestDrr
     end
-    if (drrMappings[closestDrr] ~= nil) then
-        return drrMappings[closestDrr]
+    if (_global.drrMappings[_global.closestDrr] ~= nil) then
+        return _global.drrMappings[_global.closestDrr]
     end
-    local command = {}
-    command["cancellable"] = "false"
-    command["args"] = {}
-    command["args"][1] = "xvidtune"
-    command["args"][2] = "-show"
-    local output = mputils.subprocess(command)
+    local command = {
+        ["cancellable"] = "false",
+        ["args"] = {
+            [1] = "xvidtune",
+            [2] = "-show"
+        }
+    }
+    local output = _global.utils.subprocess(command)
     if (output == nil or output.error ~= nil) then
-        drrMappings[closestDrr] = closestDrr
-        return closestDrr
+        _global.drrMappings[_global.closestDrr] = _global.closestDrr
+        return _global.closestDrr
     end
     local pixClock, totalWidth, totalHeight = string.match(output.stdout, '^%s*"[%dx]+"%s+([%d.]+)%s+%d+%s+%d+%s+%d+%s+(%d+)%s+%d+%s+%d+%s+%d+%s+(%d+)%s+')
     if (pixClock == nil or totalWidth == nil or totalHeight == nil) then
-        drrMappings[closestDrr] = closestDrr
-        return closestDrr 
+        _global.drrMappings[_global.closestDrr] = _global.closestDrr
+        return _global.closestDrr 
     end
     local tempDrr = ((pixClock * 1000000) / (totalWidth * totalHeight))
     -- The refresh rate from mpv should be close to the one from the modeline, ignore modeline one if it's too different.
-    if (math.abs((tempDrr - closestDrr)) >= 2) then
-        drrMappings[closestDrr] = closestDrr
-        return closestDrr
+    if (math.abs((tempDrr - _global.closestDrr)) >= 2) then
+        _global.drrMappings[_global.closestDrr] = _global.closestDrr
+        return _global.closestDrr
     end
-    drrMappings[closestDrr] = tempDrr
-    return drrMappings[closestDrr]
+    _global.drrMappings[_global.closestDrr] = tempDrr
+    return _global.drrMappings[_global.closestDrr]
 end
 
 --[[
@@ -524,20 +533,16 @@ end
     @param table event
 --]]
 function revertDrr(event)
-    if (exit_drr == 0) then
+    if (_global.exit_drr == 0) then
         return
     end
     -- Round
-    exit_drr = exit_drr + 0.5 - (exit_drr + 0.5) % 1
+    _global.exit_drr = _global.exit_drr + 0.5 - (_global.exit_drr + 0.5) % 1
     if (config.use_xrandr == true) then
         os.execute(
-            "xrandr -s " ..
-            config.display_width ..
-            "x" ..
-            config.display_height ..
-            " -r " ..
-            tostring(exit_drr) ..
-            " &"
+            "xrandr --output " ..
+            config.xrandr_display ..
+            " --mode " .. config.exit_drr .. " &"
         )
     end
     if (config.use_nircdm == true) then
@@ -546,7 +551,7 @@ function revertDrr(event)
             config.display_width .. " " ..
             config.display_height .. " " ..
             config.nircmd_bit_depth .. " " ..
-            tostring(exit_drr)
+            tostring(_global.exit_drr)
         )
     end
 end

@@ -182,7 +182,6 @@ function main()
         _global.aid = true
     end
     _global.layout = getLayout()
-    print(_global.layout)
     if (_global.layout == "" or _global.layouts[_global.layout] == nil) then
         return
     end

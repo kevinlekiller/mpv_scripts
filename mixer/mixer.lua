@@ -3,7 +3,6 @@
     By default this will mix to stereo.
     Change "map" variables below to alter number of output channels / input volumes.
     Uses mpv's "pan" filter http://mpv.io/manual/master/#audio-filters-pan
-    Uses/requires ffprobe to detect current audio channel layout.
     
     Default keybinds are ' to print to OSD, ; to disable/enable the script.
 
@@ -174,22 +173,16 @@ local _global = {
     off = false
 }
 
-mputils = require 'mp.utils'
-
-function fileExists(path)
-    if (path == nil) then
-        return
-    end
-    local test = io.open(path, "r")
-    if (test == nil) then
-        return false
-    end
-    io.close(test)
-    return true
-end
-
 function main()
+    local aid = mp.get_property("aid")
+    if (aid == nil or aid == "no" or aid == "") then
+        _global.aid = false
+        return
+    else
+        _global.aid = true
+    end
     _global.layout = getLayout()
+    print(_global.layout)
     if (_global.layout == "" or _global.layouts[_global.layout] == nil) then
         return
     end
@@ -199,7 +192,7 @@ function main()
     setPan()
     
     if (map["OSD"] == true) then
-        _global.osd_out = (_global.osd_start .. "ReMixer:" .. "\\N" ..
+        _global.osd_out = (_global.osd_start .. "mixer:" .. "\\N" ..
                 "Input: " .. _global.layout .. " " .. _global.layouts[_global.layout] .. "\\N" ..
                 "Output: " .. map["CHANS"] .. " audio channels" .. "\\N" ..
                 "Filter: " .. _global.panLayouts[_global.layout] .. _global.osd_end
@@ -211,50 +204,20 @@ function main()
 end
 
 function getLayout()
-    local videoPath = mp.get_property("stream-path")
-    if (fileExists(videoPath) == false) then
+    -- {"samplerate":44100,"channel-count":2,"channels":"stereo","hr-channels":"stereo","format":"floatp"}
+    local params = mp.get_property("audio-params")
+    if (params == nil) then
         return ""
     end
-    local aid = mp.get_property("ff-aid")
-    if (aid == _global.aid) then
+    local channels, hr_channels = string.match(params, '"channels":"(.*)","hr%-channels":"(.*)","format":')
+    local layout = ""
+    if (channels ~= nil and _global.layouts[channels] ~= nil) then
+        return channels
+    elseif (hr_channels ~= nil and _global.layouts[hr_channels] ~= nil) then
+        return hr_channels
+    else
         return ""
     end
-    _global.aid = aid
-    if (aid == "no") then
-        _global.osd_out = ""
-        return ""
-    elseif (aid == nil) then
-        return ""
-    end
-    local command = {
-        ["cancellable"] = "false",
-        ["args"] = {
-            [1] = "ffprobe",
-            [2] = "-v",
-            [3] = "quiet",
-            [4] = "-print_format",
-            [5] = "json",
-            [6] = "-show_streams",
-            [7] = "-select_streams",
-            [8] = aid,
-            [9] = "-show_entries",
-            [10] = "stream=channel_layout",
-            [11] = videoPath
-        }
-    }
-    local output = mputils.subprocess(command)
-    if (output == nil) then
-        return ""
-    end
-    output = mputils.parse_json(output.stdout)
-    if (output == nil or output == error or output.streams[1] == nil) then
-        return ""
-    end
-    output = output.streams[1].channel_layout
-    if (output == nil) then
-        return ""
-    end
-    return output
 end
 
 function getAf()
@@ -298,8 +261,8 @@ function setPan()
 end
 
 function osd()
-    if (_global.off == true) then
-        mp.osd_message(_global.osd_start .. "ReMixer: Disabled." .. _global.osd_end, map["OSDTIME"])
+    if (_global.aid == false or _global.off == true) then
+        mp.osd_message(_global.osd_start .. "mixer: Disabled." .. _global.osd_end, map["OSDTIME"])
     else
         mp.osd_message(_global.osd_out, map["OSDTIME"])
     end

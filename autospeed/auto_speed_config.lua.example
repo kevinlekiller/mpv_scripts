@@ -61,6 +61,8 @@ srr = {
     _120 = false,
     _144 = false
 }
+-- Set to the mode you want when exiting. By default this will set the monitor to 60hz on exit.
+exit_drr = srr._60
 ---------------------- End of refresh rate settings. -----------------------------
 ------------------------ Start of speed settings. --------------------------------
 -- Use ffprobe to find a more accurate video frame rate.

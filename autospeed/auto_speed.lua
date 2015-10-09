@@ -128,7 +128,9 @@ function main()
         return 2
     end
 
-    _global.exit_drr = original_drr
+    if (config.use_nircdm == true) then
+        _global.exit_drr = original_drr
+    end
     fps = getMoreAccurateFrameRate(fps)
     wanted_drr = getAndSetRefreshRate(fps)
 

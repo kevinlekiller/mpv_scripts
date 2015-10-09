@@ -128,9 +128,8 @@ function main()
         return 2
     end
 
-    if (config.use_nircdm == true) then
-        _global.exit_drr = original_drr
-    end
+    _global.exit_drr = original_drr
+
     fps = getMoreAccurateFrameRate(fps)
     wanted_drr = getAndSetRefreshRate(fps)
 
@@ -535,9 +534,6 @@ end
     @param table event
 --]]
 function revertDrr(event)
-    if (_global.exit_drr == 0) then
-        return
-    end
     if (config.use_xrandr == true) then
         os.execute(
             "xrandr --output " ..
@@ -546,6 +542,9 @@ function revertDrr(event)
         )
     end
     if (config.use_nircdm == true) then
+        if (_global.exit_drr == 0) then
+            return
+        end
         -- Round
          _global.exit_drr = _global.exit_drr + 0.5 - (_global.exit_drr + 0.5) % 1
         os.execute(

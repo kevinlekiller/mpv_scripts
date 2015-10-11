@@ -30,6 +30,7 @@ local _global = {
     -- You can also toggle the logFps variable below if you want to help.
     -- Some of these are good, they are there to prevent a call to ffprobe.
     knownFps = {
+        [23.975986] = 13978/583,
         [23.976]    = 2997/125,
         [23.976025] = 24000/1001,
         [23.976044] = 27021/1127,
@@ -186,7 +187,7 @@ function getFfprobeFps()
         return 0
     end
     if (_global.logFps == true) then
-        os.execute("echo [$(date)] " .. _global.temp["fps"] .. " " .. output.streams[1].avg_frame_rate .. " " .. mp.get_property("filename") .. " >> ~/mpv_unk_fps.log") 
+        os.execute("echo [$(date)] " .. mp.get_property("filename") .. "[" .. _global.temp["fps"] .. "] = " .. output.streams[1].avg_frame_rate .. ", >> ~/mpv_unk_fps.log") 
     end
     
     local ff_fps = first / second

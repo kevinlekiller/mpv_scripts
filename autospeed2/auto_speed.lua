@@ -114,9 +114,10 @@ function main()
     _global.temp["original_speed"] = mp.get_property("speed")
     
     determineSpeed()
-    
     if (_global.temp["speed"] > 0 and _global.temp["speed"] > config.thresholds.min_speed and _global.temp["speed"] < config.thresholds.max_speed) then
         mp.set_property("speed", _global.temp["speed"])
+    else
+        _global.temp["speed"] = _global.temp["original_speed"]
     end
     
     if (config.osd_displayed == true) then

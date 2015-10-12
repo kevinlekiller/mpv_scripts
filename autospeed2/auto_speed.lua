@@ -264,11 +264,18 @@ function findRefreshRate()
         return 0
     end
     local round_fps = round(_global.temp["fps"])
-    local multipliers = {1, 2, 3, 4, 5}
+    -- If video FPS is 24 fps, 240 / 24 = 10, try 10 times to find a suitable monitor mode,
+    -- for example: 24, 48, 72, 96, 120, 144, 168, 192, 226, 240 hz
+    -- TODO? Maybe add fallback code if for example the video is 120fps and the monitor
+    -- can only go as high as 60hz, although this will lead to dropped frames.
+    local iterator = (240 / round_fps)
+    if (iterator < round_fps) then
+        iterator = 1
+    end
     for rate, val in pairs(_global.modes) do
         local min = (rate * config.thresholds.min_speed)
         local max = (rate * config.thresholds.max_speed)
-        for multiplier in ipairs(multipliers) do
+        for multiplier = 1, iterator do
             local multiplied_fps = (multiplier * round_fps)
             if (multiplied_fps >= min and multiplied_fps <= max) then
                 setXrandrRate(val["mode"])

@@ -269,7 +269,7 @@ function findRefreshRate()
     -- TODO? Maybe add fallback code if for example the video is 120fps and the monitor
     -- can only go as high as 60hz, although this will lead to dropped frames.
     local iterator = (240 / round_fps)
-    if (iterator < round_fps) then
+    if (iterator < 1) then
         iterator = 1
     end
     for rate, val in pairs(_global.modes) do

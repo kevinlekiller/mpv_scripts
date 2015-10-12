@@ -161,8 +161,8 @@ function getFfprobeFps()
         ["args"] = {
             [1] = "ffprobe",
             [2] = "-select_streams",
-            [3] = "v",
-            [4] = "-v:" .. mp.get_property("ff-vid"),
+            [3] = "v:" .. mp.get_property("ff-vid"),
+            [4] = "-v",
             [5] = "quiet",
             [6] = "-show_streams",
             [7] = "-show_entries",

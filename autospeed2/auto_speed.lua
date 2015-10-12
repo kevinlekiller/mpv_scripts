@@ -153,7 +153,7 @@ function getFfprobeFps()
     -- Get video file name.
     local video = mp.get_property("stream-path")
     if (fileExists(video) == false) then
-        return 0
+        return _global.temp["fps"]
     end
     local command = {
         ["cancellable"] = "false",
@@ -173,18 +173,18 @@ function getFfprobeFps()
     }
     local output = _global.utils.subprocess(command)
     if (output == nil) then
-        return 0
+        return _global.temp["fps"]
     end
     
     local output = _global.utils.parse_json(output.stdout)
     -- Make sure we got data, and avg_frame_rate is the same as r_frame_rate, otherwise the video is not constant fps.
     if (output == nil or output == error or output.streams[1].avg_frame_rate ~= output.streams[1].r_frame_rate) then
-        return 0
+        return _global.temp["fps"]
     end
     
     local first, second = output.streams[1].avg_frame_rate:match("([0-9]+)[^0-9]+([0-9]+)")
     if (notInt(first) or notInt(second)) then
-        return 0
+        return _global.temp["fps"]
     end
     if (_global.logFps == true) then
         os.execute("echo [$(date)] " .. mp.get_property("filename") .. " [" .. _global.temp["fps"] .. "] = " .. output.streams[1].avg_frame_rate .. ", >> ~/mpv_unk_fps.log") 
@@ -192,7 +192,7 @@ function getFfprobeFps()
     
     local ff_fps = first / second
     if (ff_fps < 1) then
-        return 0
+        return _global.temp["fps"]
     end
     _global.knownFps[_global.temp["fps"]] = ff_fps
     return ff_fps

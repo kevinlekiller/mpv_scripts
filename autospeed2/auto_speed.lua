@@ -156,6 +156,9 @@ function getFfprobeFps()
     -- Get video file name.
     local video = mp.get_property("stream-path")
     if (fileExists(video) == false) then
+        if (_global.logFps == true) then
+            os.execute("echo [$(date)] \"" ..mp.get_property("path") .. "\" " .. _global.temp["fps"] .. " >> ~/mpv_unk_fps.log") 
+        end
         return _global.temp["fps"]
     end
     local command = {

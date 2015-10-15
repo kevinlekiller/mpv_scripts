@@ -1,7 +1,20 @@
 --[[
-    Copy auto_speed_config.lua.example to auto_speed_config.lua and change the options in that file.
+    See script details on https://github.com/kevinlekiller/mpv_scripts
+    
+    Valid --script-opts are (they are all optional):
+    autospeed-xrandr=false     true/false - Use xrandr.
+    autospeed-ffprobe=false    true/false - Use ffprobe
+    autospeed-display=HDMI1               - Use specified xrandr display, fetch with xrandr -q
+    autospeed-exitmode=0x48               - Revert to this mode when exiting mpv, fetch with xrandr --verbose
+    autospeed-minspeed=0.9     Number     - Minimum allowable speed to play video at.
+    autospeed-maxspeed=1.1     Number     - Maximum allowable speed to play video at.
+    autospeed-osd=true         true/false - Enable OSD.
+    autospeed-osdstart=false   true/false - Show OSD output when a video starts.
+    autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
+    autospeed-osdkey=y                    - Key to press to show the OSD.
+    autospeed-logfps=false     true/false - Log non known ffprobe fps's to ~/mpv_unk_fps.log
 
-    https://github.com/kevinlekiller/mpv_scripts
+    Example: mpv file.mkv --script-opts=autospeed-ffprobe=true,--autospeed-minspeed=0.8
 --]]
 --[[
     Copyright (C) 2015  kevinlekiller
@@ -27,7 +40,7 @@ local _global = {
     osd_end = mp.get_property_osd("osd-ass-cc/1"),
     utils = require 'mp.utils',
     -- I will keep adding these as I find them.
-    -- You can also toggle the logFps variable below if you want to help.
+    -- You can also pass --script-options=autospeed-logfps=true to log (~/mpv_unk_fps.log) ones not found in this table.
     -- Some of these are good, they are there to prevent a call to ffprobe.
     knownFps = {
         [23.975986] = 13978/583,
@@ -39,11 +52,12 @@ local _global = {
         [29.970030] = 30000/1001,
         [30.000000] = 30/1,
         [50]        = 50/1,
-        [59.939999] = 2997/50
+        [59.939999] = 2997/50,
+        [59.94006]  = 19001/317
     },
     modes = {},
     temp = {},
-    logFps = false -- Log unknown fps to ~/mpv_unk_fps.log
+    options = nil
 }
 
 function fileExists(path)
@@ -51,31 +65,8 @@ function fileExists(path)
     if (test == nil) then
         return false
     end
-  return io.close(test)
+    return io.close(test)
 end
-
-config = {}
-function setConfig()
-    if (fileExists(string.match(debug.getinfo(2, "S").source:sub(2), "(.*/)") .. "auto_speed_config.lua")) then
-        return require "auto_speed_config"
-    end
-    config = {
-        use_xrandr = false,
-        use_ffprobe = false,
-        display = "HDMI1",
-        resolution  = "1920x1080",
-        exit_drr = "",
-        thresholds = {
-            min_speed = 0.9,
-            max_speed = 1.1
-        },
-        osd_displayed = false,
-        osd_start = false,
-        osd_time = 10,
-        osd_key = "y"
-    }
-end
-setConfig()
 
 function round(number)
     return math.floor(number + 0.5)
@@ -86,10 +77,40 @@ function notInt(integer)
 end
 
 function osdEcho()
-    if (config.osd_displayed == true) then
-        mp.osd_message(_global.temp["output"], config.osd_time)
+    if (_global.options["osd"] == "true") then
+        mp.osd_message(_global.temp["output"], _global.options["osdtime"])
     end
 end
+
+function getOptions()
+    _global.options = {
+        ["xrandr"]   = "false",
+        ["ffprobe"]  = "false",
+        ["display"]  = "HDMI1",
+        ["exitmode"] = "",
+        ["minspeed"] = "0.9",
+        ["maxspeed"] = "1.1",
+        ["osd"]      = "false",
+        ["osdstart"] = "false",
+        ["osdtime"]  = "10",
+        ["osdkey"]   = "y",
+        ["logfps"]   = "false"
+    }
+    for key, value in pairs(_global.options) do
+        local opt = mp.get_opt("autospeed-" .. key)
+        if (opt ~= nil) then
+            if ((key == "xrandr" or key == "ffprobe" or key == "osd" or key == "osdstart" or key == "logfps") and opt == "true") then
+                _global.options[key] = opt
+            elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime") then
+                local test = tonumber(opt)
+                if (test ~= nil) then
+                    _global.options[key] = test
+                end
+            end
+        end
+    end
+end
+getOptions()
 
 function main()
     _global.temp = {}
@@ -116,15 +137,15 @@ function main()
     _global.temp["original_speed"] = mp.get_property("speed")
     
     determineSpeed()
-    if (_global.temp["speed"] > 0 and _global.temp["speed"] > config.thresholds.min_speed and _global.temp["speed"] < config.thresholds.max_speed) then
+    if (_global.temp["speed"] > 0 and _global.temp["speed"] > _global.options["minspeed"] and _global.temp["speed"] < _global.options["maxspeed"]) then
         mp.set_property("speed", _global.temp["speed"])
     else
         _global.temp["speed"] = _global.temp["original_speed"]
     end
     
-    if (config.osd_displayed == true) then
+    if (_global.options["osd"] == "true") then
         setOSD()
-        if (config.osd_start == true) then
+        if (_global.options["osdstart"] == "true") then
             osdEcho()
         end
     end
@@ -141,7 +162,7 @@ function setOSD()
         "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["original_speed"] .. "x\\N" ..
         "{\\b1}Current  mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["speed"] .. "x" ..
         _global.osd_end
-    )
+)
 end
 
 function getFfprobeFps()
@@ -150,13 +171,13 @@ function getFfprobeFps()
     if (temp ~= nil) then
         return temp
     end
-    if (config.use_ffprobe == false) then
+    if (_global.options["ffprobe"] ~= "true") then
         return _global.temp["fps"]
     end
     -- Get video file name.
     local video = mp.get_property("stream-path")
     if (fileExists(video) == false) then
-        if (_global.logFps == true) then
+        if (_global.options["logfps"] == "true") then
             os.execute("echo [$(date)] \"" ..mp.get_property("path") .. "\" " .. _global.temp["fps"] .. " >> ~/mpv_unk_fps.log") 
         end
         return _global.temp["fps"]
@@ -192,7 +213,7 @@ function getFfprobeFps()
     if (notInt(first) or notInt(second)) then
         return _global.temp["fps"]
     end
-    if (_global.logFps == true) then
+    if (_global.options["logfps"] == "true") then
         os.execute("echo [$(date)] \"" .. mp.get_property("filename") .. "\" [" .. _global.temp["fps"] .. "] = " .. output.streams[1].avg_frame_rate .. ", >> ~/mpv_unk_fps.log") 
     end
     
@@ -266,7 +287,7 @@ function determineSpeed()
 end
 
 function findRefreshRate()
-    if (config.use_xrandr == false or getXrandrRates() == false) then
+    if (_global.options["xrandr"] ~= "true" or getXrandrRates() == false) then
         return 0
     end
     local round_fps = round(_global.temp["fps"])
@@ -279,8 +300,8 @@ function findRefreshRate()
         iterator = 1
     end
     for rate, val in pairs(_global.modes) do
-        local min = (rate * config.thresholds.min_speed)
-        local max = (rate * config.thresholds.max_speed)
+        local min = (rate * _global.options["minspeed"])
+        local max = (rate * _global.options["maxspeed"])
         for multiplier = 1, iterator do
             local multiplied_fps = (multiplier * round_fps)
             if (multiplied_fps >= min and multiplied_fps <= max) then
@@ -293,15 +314,15 @@ function findRefreshRate()
 end
 
 function setXrandrRate(mode)
-    if (config.use_xrandr == true) then
+    if (_global.options["xrandr"] == "true") then
         local command = {
             ["cancellable"] = "false",
             ["args"] = {
                 [1] = "xrandr",
                 [2] = "--output",
-                [3] = tostring(config.display),
+                [3] = _global.options["display"],
                 [4] = "--mode",
-                [5] = tostring(mode)
+                [5] = mode
             }
         }
         _global.utils.subprocess(command)
@@ -317,40 +338,49 @@ function getXrandrRates()
         foundDisp = false,
         foundRes = false,
         count = 0,
-        temp = {}
+        temp = {},
+        resolution
     }
     
     for line in vars.handle:lines() do
         if (vars.foundDisp == true) then -- We found the display name.
-            if (string.match(line, "^%S") ~= nil) then
-                break -- We reached the next display or EOF.
-            end
-            if (string.match(line, "^%s+" .. config.resolution) ~= nil) then -- Look for screen resolution.
-                vars.foundRes = true
-            end
-            if (vars.foundRes == true) then -- We found a matching screen resolution.
-                vars.count = vars.count + 1
-                if (vars.count == 1) then -- Log the mode name / pixel clock speed.
-                    local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
-                    vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
-                elseif (vars.count == 2) then -- Log the total horizontal pixels.
-                    vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
+        if (string.match(line, "^%S") ~= nil) then
+            break -- We reached the next display or EOF.
+        end
+        if (string.match(line, "^%s+" .. vars.resolution) ~= nil) then -- Check if mode uses current display resolution.
+        vars.foundRes = true
+    end
+    if (vars.foundRes == true) then -- We found a matching screen resolution.
+    vars.count = vars.count + 1
+    if (vars.count == 1) then -- Log the mode name / pixel clock speed.
+    local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
+    vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
+elseif (vars.count == 2) then -- Log the total horizontal pixels.
+vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
                 elseif (vars.count == 3) then -- Get the total vertical pixels, calculate refresh rate, log it.
-                    local vtotal, clock = string.match(line, "total%s+(%d+).+clock%s+([%d.]+)[KkHh]+z")
-                    _global.modes[round(clock)] = {
-                        ["clock"] = ((vars.temp["pclock"] * 1000000) / (vtotal * vars.temp["htotal"])),
-                        ["mode"] = vars.temp["mode"]
-                    }
-                    vars.count = 0 -- Reset variables to look for another matching resolution.
-                    vars.foundRes = false
-                    vars.temp = {}
+                local vtotal, clock = string.match(line, "total%s+(%d+).+clock%s+([%d.]+)[KkHh]+z")
+                _global.modes[round(clock)] = {
+                    ["clock"] = ((vars.temp["pclock"] * 1000000) / (vtotal * vars.temp["htotal"])),
+                    ["mode"] = vars.temp["mode"]
+                }
+                vars.count = 0 -- Reset variables to look for another matching resolution.
+                vars.foundRes = false
+                vars.temp = {}
                 end
             end
-        elseif (string.match(line, "^" .. config.display) == config.display) then -- Look for display name.
-            if (string.find(line, "disconnected") ~= nil) then
-                break -- Wrong display name was given.
+        elseif (string.match(line, "^" .. _global.options["display"]) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
+        if (string.find(line, "disconnected") ~= nil) then
+            break -- Wrong display name was given.
+        else
+            local res = string.match(line, "^" .. _global.options["display"] .. "[^%d]+([%dx]+)") -- Find current monitor resolution.
+            if (res ~= nil and res ~= "") then
+                vars.resolution = res
+                vars.foundDisp = true
+            else
+                break -- Could not find display resolution.
             end
-            vars.foundDisp = true
+        end
+        
         end
     end 
     vars.handle:close()
@@ -360,11 +390,11 @@ function getXrandrRates()
     end
 end
 
-if (config.use_xrandr == true and config.exit_drr ~= "") then
+if (_global.options["xrandr"] == "true" and _global.options.exitmode ~= "") then
     function revertDrr()
-        os.execute("xrandr --output " .. config.display .. " --mode " .. config.exit_drr .. " &")
+        os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.options["exitmode"] .. " &")
     end
     mp.register_event("shutdown", revertDrr)
 end
 mp.observe_property("fps", "native", main)
-mp.add_key_binding(config.osd_key, mp.get_script_name(), osdEcho, {repeatable=true})
+mp.add_key_binding(_global.options["osdkey"], mp.get_script_name(), osdEcho, {repeatable=true})

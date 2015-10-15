@@ -61,7 +61,7 @@ This enables/disables the other autospeed-osd settings.
 When a new video is played, the autospeed OSD will be displayed.
 
     autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
-
+Self-explanatory.
 
     autospeed-osdkey=y                    - Key to press to show the OSD.
 Pressing this key will display the autospeed OSD.

@@ -37,39 +37,39 @@ Valid options are:
 Xrandr will be used to change the refresh rate of your monitor and find the refresh rate of your monitor using the modeline.
 
     autospeed-ffprobe=false    true/false - Use ffprobe.
-Ffprobe will be used to fetch the video frame rate.
-
+        Ffprobe will be used to fetch the video frame rate.
     autospeed-display=HDMI1
-Tell xrandr to use the specified display when changing the refresh rate, find these using this command: `xrandr | grep -Poi '^.+connected'`
-
+        Tell xrandr to use the specified display when changing the refresh
+        rate, find these using this command: `xrandr | grep -Poi '^.+connected'`
     autospeed-exitmode=0x48
-Revert to this mode when exiting mpv. Find using this command `xrandr --verbose`
-For example, "0x48" in the following string is the mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
-
+        Revert to this mode when exiting mpv. Find using this command `xrandr --verbose`
+        For example, "0x48" in the following string is the
+        mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
     autospeed-minspeed=0.9     Number - Minimum allowable speed to play video at.
-Do not change speed setting if the calculated speed is lower than this.
-This is to prevent the video looking like it is in slow motion.
-
+        Do not change speed setting if the calculated speed is lower than this.
+        This is to prevent the video looking like it is in slow motion.
     autospeed-maxspeed=1.1     Number -Maximum allowable speed to play video at.
-Do not change speed setting if the calculated speed is higher than this.
-This is to prevent the video looking like it is in fast forward.
-
+        Do not change speed setting if the calculated speed is higher than this.
+        This is to prevent the video looking like it is in fast forward.
     autospeed-osd=false         true/false - Enable OSD.
-This enables/disables the other autospeed-osd settings.
-
+        This enables/disables the other autospeed-osd settings.
     autospeed-osdstart=false   true/false - Show OSD output when a video starts.
-When a new video is played, the autospeed OSD will be displayed.
-
+        When a new video is played, the autospeed OSD will be displayed.
     autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
-Self-explanatory.
-
+        Self-explanatory.
     autospeed-osdkey=y                    - Key to press to show the OSD.
-Pressing this key will display the autospeed OSD.
-
+        Pressing this key will display the autospeed OSD.
     autospeed-logfps=false     true/false - Log non known ffprobe fps's to ~/mpv_unk_fps.log
-If a ffprobe fps is not in [this list](https://github.com/kevinlekiller/mpv_scripts/blob/master/autospeed2/auto_speed.lua#L45), log it, so you or I can add it to the list, which prevents calling ffprobe and speeds up the script.
-
-Example in `mpv.conf` : script-opts=autospeed-xrandr=true,autospeed-ffprobe=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdstart=false,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-logfps=false
+       If a ffprobe fps is not here:
+       https://github.com/kevinlekiller/mpv_scripts/blob/master/autospeed2/auto_speed.lua#L45,
+       log it, so you or I can add it to the list,
+       which prevents calling ffprobe and speeds up the script.
+    
+    Examples:
+        Setting the options at the command line:
+            mpv file.mkv --script-opts=autospeed-ffprobe=true,autospeed-minspeed=0.8,autospeed-xrandr=true
+        Setting the options in ~/mpv/mpv.conf:
+            script-opts=autospeed-xrandr=true,autospeed-ffprobe=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdstart=false,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-logfps=false
 
 --------------
 

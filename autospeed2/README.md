@@ -30,7 +30,7 @@ Lower resource usage than using interpolation.
 
 The script can read options from mpv's [--script-opts](http://mpv.io/manual/master/#options-script-opts) option.
 
-Valid options are:
+Valid options (and examples):
 
     autospeed-xrandr=false     true/false - Use xrandr.
         Xrandr will be used to change the refresh rate of your monitor and

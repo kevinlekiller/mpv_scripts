@@ -127,7 +127,7 @@ function main()
     end
     
     _global.temp["fps"] = getFfprobeFps()
-    wanted_drr = findRefreshRate()
+    local wanted_drr = findRefreshRate()
     
     _global.temp["drr"] = tonumber(mp.get_property("display-fps"))
     -- If we didn't get the updated display refresh rate, sleep and try again.
@@ -166,7 +166,7 @@ function setOSD()
         "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.confspeed .. "x\\N" ..
         "{\\b1}Current  mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["speed"] .. "x" ..
         _global.osd_end
-)
+    )
 end
 
 function getFfprobeFps()

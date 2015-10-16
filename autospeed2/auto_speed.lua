@@ -55,9 +55,7 @@ local _global = {
         [59.939999] = 2997/50,
         [59.94006]  = 19001/317
     },
-    modes = {},
-    temp = {},
-    options = nil
+    modes = {}
 }
 
 function fileExists(path)

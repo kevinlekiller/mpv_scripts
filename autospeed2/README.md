@@ -50,7 +50,7 @@ Valid options (and examples):
     autospeed-maxspeed=1.1     Number - Maximum allowable speed to play video at.
         Do not change speed setting if the calculated speed is higher than this.
         This is to prevent the video looking like it is in fast forward.
-    autospeed-osd=false         true/false - Enable OSD.
+    autospeed-osd=false        true/false - Enable OSD.
         This enables/disables the other autospeed-osd settings.
     autospeed-osdstart=false   true/false - Show OSD output when a video starts.
         When a new video is played, the autospeed OSD will be displayed.

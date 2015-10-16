@@ -8,7 +8,7 @@
 
 * Should work on all operating systems supported by mpv.
 
-* Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) (*nix only) To accurately calculate your monitor refresh rate and to set your monitors refresh rate closer to the video playback speed.
+* Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) (*nix only) To accurately calculate your monitor refresh rate and to set your monitors refresh rate closer to the video playback speed based on which refresh rates your monitor supports for the current resolution.
 
 * Can use (recommended) [ffprobe](https://www.ffmpeg.org/download.html) to get a more accurate video frame rate. When using the "get_property" command in mpv, the numbers are rounded or truncated (instead of returning 23.97602397602398, it returns 23.976025), 
 ffprobe can be used to get the fps instead to calculate a more accurate speed setting.
@@ -19,7 +19,7 @@ ffprobe can be used to get the fps instead to calculate a more accurate speed se
 
 #####Basic Description:
 
-Optionally over or under clocks the monitor refresh rate to be closer to the video fps, then sets
+Optionally changes the monitor refresh rate to be closer to the video fps, then sets
 the speed of the video to be closer to the monitor refresh rate.
 
 Lower resource usage than using interpolation.

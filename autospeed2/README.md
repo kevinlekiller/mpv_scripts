@@ -82,6 +82,10 @@ Download link:
 
 You can use programs like `wget` or `curl` to download from the command line.
 
+For example, to download using curl on *nix:
+
+`mkdir -p ~/.mpv/scripts && curl -o ~/.mpv/scripts/autospeed.lua https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed2/auto_speed.lua`
+
 --------------
 
 #####Detailed Description:

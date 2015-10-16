@@ -60,10 +60,10 @@ Xrandr will be used to change the refresh rate of your monitor and find the refr
     autospeed-osdkey=y                    - Key to press to show the OSD.
         Pressing this key will display the autospeed OSD.
     autospeed-logfps=false     true/false - Log non known ffprobe fps's to ~/mpv_unk_fps.log
-       If a ffprobe fps is not here:
-       https://github.com/kevinlekiller/mpv_scripts/blob/master/autospeed2/auto_speed.lua#L45,
-       log it, so you or I can add it to the list,
-       which prevents calling ffprobe and speeds up the script.
+        If a ffprobe fps is not here:
+        https://github.com/kevinlekiller/mpv_scripts/blob/master/autospeed2/auto_speed.lua#L45,
+        log it, so you or I can add it to the list,
+        which prevents calling ffprobe and speeds up the script.
     
     Examples:
         Setting the options at the command line:

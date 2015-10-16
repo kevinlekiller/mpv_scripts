@@ -106,6 +106,8 @@ function getOptions()
                 if (test ~= nil) then
                     _global.options[key] = test
                 end
+            else
+                _global.options[key] = opt
             end
         end
     end

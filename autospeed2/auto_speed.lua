@@ -133,14 +133,16 @@ function main()
         os.execute("sleep 1")
         _global.temp["drr"] = tonumber(mp.get_property("display-fps"))
     end
-    
-    _global.temp["original_speed"] = mp.get_property("speed")
+
+    if (_global.confspeed == nil) then
+        _global.confspeed = mp.get_property("speed")
+    end
     
     determineSpeed()
     if (_global.temp["speed"] > 0 and _global.temp["speed"] > _global.options["minspeed"] and _global.temp["speed"] < _global.options["maxspeed"]) then
         mp.set_property("speed", _global.temp["speed"])
     else
-        _global.temp["speed"] = _global.temp["original_speed"]
+        _global.temp["speed"] = _global.confspeed
     end
     
     if (_global.options["osd"] == "true") then
@@ -159,7 +161,7 @@ function setOSD()
         "{\\b1}Current  video fps{\\b0}\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h" .. (_global.temp["fps"] * _global.temp["speed"]) .. "fps\\N" ..
         "{\\b1}Original video playback fps{\\b0}\\h\\h\\h\\h\\h" .. _global.temp["relative_fps"] .. "fps\\N" ..
         "{\\b1}Current  video playback fps{\\b0}\\h\\h\\h\\h\\h" .. (_global.temp["relative_fps"] * _global.temp["speed"]) .. "fps\\N" ..
-        "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["original_speed"] .. "x\\N" ..
+        "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.confspeed .. "x\\N" ..
         "{\\b1}Current  mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["speed"] .. "x" ..
         _global.osd_end
 )
@@ -344,43 +346,42 @@ function getXrandrRates()
     
     for line in vars.handle:lines() do
         if (vars.foundDisp == true) then -- We found the display name.
-        if (string.match(line, "^%S") ~= nil) then
-            break -- We reached the next display or EOF.
+            if (string.match(line, "^%S") ~= nil) then
+                break -- We reached the next display or EOF.
+            end
+            if (string.match(line, "^%s+" .. vars.resolution) ~= nil) then -- Check if mode uses current display resolution.
+            vars.foundRes = true
         end
-        if (string.match(line, "^%s+" .. vars.resolution) ~= nil) then -- Check if mode uses current display resolution.
-        vars.foundRes = true
-    end
-    if (vars.foundRes == true) then -- We found a matching screen resolution.
-    vars.count = vars.count + 1
-    if (vars.count == 1) then -- Log the mode name / pixel clock speed.
-    local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
-    vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
-elseif (vars.count == 2) then -- Log the total horizontal pixels.
-vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
+        if (vars.foundRes == true) then -- We found a matching screen resolution.
+            vars.count = vars.count + 1
+            if (vars.count == 1) then -- Log the mode name / pixel clock speed.
+                local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
+                vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
+            elseif (vars.count == 2) then -- Log the total horizontal pixels.
+                vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
                 elseif (vars.count == 3) then -- Get the total vertical pixels, calculate refresh rate, log it.
-                local vtotal, clock = string.match(line, "total%s+(%d+).+clock%s+([%d.]+)[KkHh]+z")
-                _global.modes[round(clock)] = {
-                    ["clock"] = ((vars.temp["pclock"] * 1000000) / (vtotal * vars.temp["htotal"])),
-                    ["mode"] = vars.temp["mode"]
-                }
-                vars.count = 0 -- Reset variables to look for another matching resolution.
-                vars.foundRes = false
-                vars.temp = {}
+                    local vtotal, clock = string.match(line, "total%s+(%d+).+clock%s+([%d.]+)[KkHh]+z")
+                    _global.modes[round(clock)] = {
+                        ["clock"] = ((vars.temp["pclock"] * 1000000) / (vtotal * vars.temp["htotal"])),
+                        ["mode"] = vars.temp["mode"]
+                    }
+                    vars.count = 0 -- Reset variables to look for another matching resolution.
+                    vars.foundRes = false
+                    vars.temp = {}
                 end
             end
         elseif (string.match(line, "^" .. _global.options["display"]) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
-        if (string.find(line, "disconnected") ~= nil) then
-            break -- Wrong display name was given.
-        else
-            local res = string.match(line, "^" .. _global.options["display"] .. "[^%d]+([%dx]+)") -- Find current monitor resolution.
-            if (res ~= nil and res ~= "") then
-                vars.resolution = res
-                vars.foundDisp = true
+            if (string.find(line, "disconnected") ~= nil) then
+                break -- Wrong display name was given.
             else
-                break -- Could not find display resolution.
+                local res = string.match(line, "^" .. _global.options["display"] .. "[^%d]+([%dx]+)") -- Find current monitor resolution.
+                if (res ~= nil and res ~= "") then
+                    vars.resolution = res
+                    vars.foundDisp = true
+                else
+                    break -- Could not find display resolution.
+                end
             end
-        end
-        
         end
     end 
     vars.handle:close()

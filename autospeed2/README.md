@@ -39,9 +39,9 @@ Valid options are:
         Ffprobe will be used to fetch the video frame rate.
     autospeed-display=HDMI1
         Tell xrandr to use the specified display when changing the refresh
-        rate, find these using this command: `xrandr | grep -Poi '^.+connected'`
+        rate, find these using this command: xrandr | grep -Poi '^.+connected'
     autospeed-exitmode=0x48
-        Revert to this mode when exiting mpv. Find using this command `xrandr --verbose`
+        Revert to this mode when exiting mpv. Find using this command: xrandr --verbose
         For example, "0x48" in the following string is the
         mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
     autospeed-minspeed=0.9     Number - Minimum allowable speed to play video at.

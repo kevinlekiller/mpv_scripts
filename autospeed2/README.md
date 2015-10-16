@@ -47,7 +47,7 @@ Valid options (and examples):
     autospeed-minspeed=0.9     Number - Minimum allowable speed to play video at.
         Do not change speed setting if the calculated speed is lower than this.
         This is to prevent the video looking like it is in slow motion.
-    autospeed-maxspeed=1.1     Number -Maximum allowable speed to play video at.
+    autospeed-maxspeed=1.1     Number - Maximum allowable speed to play video at.
         Do not change speed setting if the calculated speed is higher than this.
         This is to prevent the video looking like it is in fast forward.
     autospeed-osd=false         true/false - Enable OSD.

@@ -33,9 +33,8 @@ The script can read options from mpv's [--script-opts](http://mpv.io/manual/mast
 Valid options are:
 
     autospeed-xrandr=false     true/false - Use xrandr.
-
-Xrandr will be used to change the refresh rate of your monitor and find the refresh rate of your monitor using the modeline.
-
+        Xrandr will be used to change the refresh rate of your monitor and
+        find the refresh rate of your monitor using the modeline.
     autospeed-ffprobe=false    true/false - Use ffprobe.
         Ffprobe will be used to fetch the video frame rate.
     autospeed-display=HDMI1

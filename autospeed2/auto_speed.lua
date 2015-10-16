@@ -350,15 +350,15 @@ function getXrandrRates()
                 break -- We reached the next display or EOF.
             end
             if (string.match(line, "^%s+" .. vars.resolution) ~= nil) then -- Check if mode uses current display resolution.
-            vars.foundRes = true
-        end
-        if (vars.foundRes == true) then -- We found a matching screen resolution.
-            vars.count = vars.count + 1
-            if (vars.count == 1) then -- Log the mode name / pixel clock speed.
-                local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
-                vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
-            elseif (vars.count == 2) then -- Log the total horizontal pixels.
-                vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
+                vars.foundRes = true
+            end
+            if (vars.foundRes == true) then -- We found a matching screen resolution.
+                vars.count = vars.count + 1
+                if (vars.count == 1) then -- Log the mode name / pixel clock speed.
+                    local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
+                    vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
+                elseif (vars.count == 2) then -- Log the total horizontal pixels.
+                    vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
                 elseif (vars.count == 3) then -- Get the total vertical pixels, calculate refresh rate, log it.
                     local vtotal, clock = string.match(line, "total%s+(%d+).+clock%s+([%d.]+)[KkHh]+z")
                     _global.modes[round(clock)] = {
@@ -383,7 +383,7 @@ function getXrandrRates()
                 end
             end
         end
-    end 
+    end
     vars.handle:close()
     if (_global.modes == {}) then
         _global.modes = false

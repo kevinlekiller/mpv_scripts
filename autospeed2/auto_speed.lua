@@ -374,7 +374,7 @@ function getXrandrRates()
             if (string.find(line, "disconnected") ~= nil) then
                 break -- Wrong display name was given.
             else
-                local res = string.match(line, "^" .. _global.options["display"] .. "[^%d]+([%dx]+)") -- Find current monitor resolution.
+                local res = string.match(line, "^" .. _global.options["display"] .. "%D+([%dx]+)") -- Find current monitor resolution.
                 if (res ~= nil and res ~= "") then
                     vars.resolution = res
                     vars.foundDisp = true

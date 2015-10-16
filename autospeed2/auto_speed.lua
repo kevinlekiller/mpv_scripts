@@ -14,7 +14,7 @@
     autospeed-osdkey=y                    - Key to press to show the OSD.
     autospeed-logfps=false     true/false - Log non known ffprobe fps's to ~/mpv_unk_fps.log
 
-    Example: mpv file.mkv --script-opts=autospeed-ffprobe=true,--autospeed-minspeed=0.8
+    Example: mpv file.mkv --script-opts=autospeed-ffprobe=true,autospeed-minspeed=0.8
 --]]
 --[[
     Copyright (C) 2015  kevinlekiller

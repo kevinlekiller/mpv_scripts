@@ -205,13 +205,13 @@ function getFfprobeFps()
         return _global.temp["fps"]
     end
     
-    local output = _global.utils.parse_json(output.stdout)
+    output = _global.utils.parse_json(output.stdout)
     -- Make sure we got data, and avg_frame_rate is the same as r_frame_rate, otherwise the video is not constant fps.
     if (output == nil or output == error or output.streams[1].avg_frame_rate ~= output.streams[1].r_frame_rate) then
         return _global.temp["fps"]
     end
     
-    local first, second = output.streams[1].avg_frame_rate:match("([0-9]+)[^0-9]+([0-9]+)")
+    local first, second = output.streams[1].avg_frame_rate:match("(%d+)%D+(%d+)")
     if (notInt(first) or notInt(second)) then
         return _global.temp["fps"]
     end

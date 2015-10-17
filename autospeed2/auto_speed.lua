@@ -333,17 +333,7 @@ function findRefreshRate()
 end
 
 function setXrandrRate(mode)
-    local command = {
-        ["cancellable"] = "false",
-        ["args"] = {
-            [1] = "xrandr",
-            [2] = "--output",
-            [3] = _global.options["display"],
-            [4] = "--mode",
-            [5] = mode["mode"]
-        }
-    }
-    _global.utils.subprocess(command)
+    os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. mode["mode"] .. " &")
     return mode["clock"]
 end
 

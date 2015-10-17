@@ -120,12 +120,12 @@ local map = {
     
     ["CHANS"] = "2", -- Number of output channels.
 
-    ["OSD"]      = true, -- Print to OSD?
-    ["OSDSTART"] = true,  -- Print to OSD on start?
+    ["OSD"]      = false, -- Print to OSD?
+    ["OSDSTART"] = false, -- Print to OSD on start?
     ["OSDKEY"]   = "'",   -- Key to print on OSD.
     ["OSDTIME"]  = 5,     -- Seconds for OSD message to remain on screen.
     
-    ["TOGGLE"]  = ";"    -- Key to toggle on/off the script during playback.
+    ["TOGGLE"]  = ";"     -- Key to toggle on/off the script during playback.
 }
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -57,6 +57,16 @@ SDR            surround direct right
 LFE2           low frequency 2
 --]]
 
+-- You can add profiles here. See "local map" below for some details on how volumes work for channels.
+-- See `ffprobe --layouts` for a full list of layouts.
+local profiles = {
+    --                                             FL  |  FR  |   FC    |  LFE  |  BL  |  BR
+    ["5.1"]            = "pan=channels=2:matrix=[0.33,0,0,0.33,0.33,0.33,0.3,0.3,0.33,0,0,0.33]",
+    --                                             FL  |  FR  |   FC    |  LFE  |  SL  |  SR
+    ["5.1(side)"]      = "pan=channels=2:matrix=[0.33,0,0,0.33,0.33,0.33,0.3,0.3,0.33,0,0,0.33]",
+}
+
+-- If a profile is not found, one will be created using the following values.
 local map = {
     --[[
         ["INPUT CHANNEL"] = "OUTPUT SPEAKERS/VOLUMES"
@@ -187,7 +197,11 @@ function main()
     end
 
     getAf()
-    getPan()
+    if (profiles[_global.layout] ~= nil) then
+        _global.panLayouts[_global.layout] = profiles[_global.layout]
+    else
+        getPan()
+    end
     setPan()
     
     if (map["OSD"] == true) then

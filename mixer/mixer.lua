@@ -186,7 +186,7 @@ function main()
         return
     end
 
-    getAf();
+    getAf()
     getPan()
     setPan()
     

@@ -295,9 +295,9 @@ function findRefreshRate()
     local round_fps = round(_global.temp["fps"])
     local iterator = 1
     if (_global.temp["maxclock"] > round_fps) then
-        iterator = (_global.temp["maxclock"] / round_fps)
+        iterator = round(_global.temp["maxclock"] / round_fps)
     elseif (_global.temp["maxclock"] < round_fps) then
-        iterator = (round_fps / _global.temp["maxclock"])
+        iterator = round(round_fps / _global.temp["maxclock"])
     else
         return setXrandrRate(_global.modes[_global.temp["maxclock"]])
     end
@@ -319,7 +319,7 @@ function findRefreshRate()
                     local difference = (rate - multiplied_fps)
                     if (smallest == 0 or difference < smallest) then
                         smallest = difference
-                        {["mode"] = val["mode"], ["clock"] = val["clock"]}
+                        found = {["mode"] = val["mode"], ["clock"] = val["clock"]}
                     end
                 else
                     return setXrandrRate(val)

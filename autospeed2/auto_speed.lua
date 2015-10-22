@@ -139,7 +139,7 @@ function main()
     end
     
     determineSpeed()
-    if (_global.temp["speed"] > 0 and _global.temp["speed"] > _global.options["minspeed"] and _global.temp["speed"] < _global.options["maxspeed"]) then
+    if (_global.temp["speed"] > 0 and _global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
         mp.set_property("speed", _global.temp["speed"])
     else
         _global.temp["speed"] = _global.confspeed
@@ -159,8 +159,6 @@ function setOSD()
         "{\\b1}Current  monitor refresh rate{\\b0}\\h\\h" .. _global.temp["drr"] .. "Hz\\N" ..
         "{\\b1}Original video fps{\\b0}\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h" .. _global.temp["fps"] .. "fps\\N" ..
         "{\\b1}Current  video fps{\\b0}\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h" .. (_global.temp["fps"] * _global.temp["speed"]) .. "fps\\N" ..
-        "{\\b1}Original video playback fps{\\b0}\\h\\h\\h\\h\\h" .. _global.temp["relative_fps"] .. "fps\\N" ..
-        "{\\b1}Current  video playback fps{\\b0}\\h\\h\\h\\h\\h" .. (_global.temp["relative_fps"] * _global.temp["speed"]) .. "fps\\N" ..
         "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.confspeed .. "x\\N" ..
         "{\\b1}Current  mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["speed"] .. "x" ..
         _global.osd_end
@@ -228,19 +226,15 @@ function getFfprobeFps()
 end
 
 function determineSpeed()
-    local speed = 0
-    local difference = 1
-    local relative_fps = 0
     if (_global.temp["drr"] > _global.temp["fps"]) then
-        difference = (_global.temp["drr"] / _global.temp["fps"])
+        local difference = (_global.temp["drr"] / _global.temp["fps"])
         if (difference >= 2) then
             -- fps = 24fps, drr = 60hz
             -- difference = 60hz/24fps = 3 rounded
             -- 24fps * 3 = 72fps
             -- 60hz / 72fps = 0.833333333333 speed
             -- 72fps * 0.833333333333 = 60fps
-            difference = round((_global.temp["drr"] / _global.temp["fps"]))
-            speed = (_global.temp["drr"] / (_global.temp["fps"] * difference))
+            _global.temp["speed"] = (_global.temp["drr"] / (_global.temp["fps"] * round(difference)))
         else
             -- fps = 50fps, drr = 60hz
             -- 60hz / 50fps = 1.2 speed
@@ -249,22 +243,16 @@ function determineSpeed()
             -- fps = 59.94fps, drr = 60hz
             -- 60hz / 59.94fps  = 1.001001001001001 speed
             -- 59.94fps * 1.001001001001001 = 60fps
-            speed = difference
-        end
-        if ((_global.temp["drr"] - _global.temp["fps"]) < 1) then
-            relative_fps = _global.temp["fps"]
-        else
-            relative_fps = _global.temp["fps"] * difference
+            _global.temp["speed"] = difference
         end
     elseif (_global.temp["drr"] < _global.temp["fps"]) then
-        difference = (_global.temp["fps"] / _global.temp["drr"])
+        local difference = (_global.temp["fps"] / _global.temp["drr"])
         if (difference >= 2) then
             -- fps = 120fps, drr = 25hz
             -- difference = 120fps/25hz = 5 rounded
             -- 120fps/5 = 24fps ; 25hz / 24fps = 1.04166666667 speed
             -- 24fps * 1.04166666667 speed = 25fps
-            difference = round((_global.temp["fps"] / _global.temp["drr"]))
-            speed = (_global.temp["drr"] / (_global.temp["fps"] / difference))
+            _global.temp["speed"] = (_global.temp["drr"] / (_global.temp["fps"] / round(difference)))
         else
             -- fps = 60fps, drr = 50hz
             -- difference = 50hz / 60fps = 0.833333333333 speed
@@ -273,19 +261,11 @@ function determineSpeed()
             -- fps = 60fps, drr = 59.94hz
             -- difference = 59.94hz / 60fps = 0.999 speed
             -- 60fps * 0.999 speed = 59.94fps
-            speed = (_global.temp["drr"] / _global.temp["fps"])
-        end
-        if ((_global.temp["fps"] - _global.temp["drr"]) < 1) then
-            relative_fps = _global.temp["fps"]
-        else
-            relative_fps = _global.temp["fps"] / difference
+            _global.temp["speed"] = (_global.temp["drr"] / _global.temp["fps"])
         end
     elseif (_global.temp["drr"] == _global.temp["fps"]) then
-        speed = 1
-        relative_fps = _global.temp["fps"]
+        _global.temp["speed"] = 1
     end
-    _global.temp["speed"] = speed
-    _global.temp["relative_fps"] = relative_fps
 end
 
 function findRefreshRate()
@@ -316,7 +296,7 @@ function findRefreshRate()
                         found = {["mode"] = val["mode"], ["clock"] = val["clock"]}
                     end
                 elseif (multiplied_fps > rate) then
-                    local difference = (rate - multiplied_fps)
+                    local difference = (multiplied_fps - rate)
                     if (smallest == 0 or difference < smallest) then
                         smallest = difference
                         found = {["mode"] = val["mode"], ["clock"] = val["clock"]}

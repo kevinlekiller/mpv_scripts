@@ -112,15 +112,8 @@ function getOptions()
 end
 getOptions()
 
-function main()
+function main(name, fps)
     _global.temp = {}
-    local fps = mp.get_property("fps")
-    if (fps == nil or fps == "nil property unavailable") then
-        fps = mp.get_property("estimated-vf-fps")
-        if (fps == nil or fps == "nil property unavailable") then
-            return
-        end
-    end
     _global.temp["fps"] = tonumber(fps)
     if not (_global.temp["fps"]) then
         return
@@ -185,7 +178,7 @@ function getFfprobeFps()
     local video = mp.get_property("stream-path")
     if not (fileExists(video)) then
         if (_global.options["logfps"] == true) then
-            os.execute("echo [$(date)] \"" ..mp.get_property("path") .. "\" " .. _global.temp["fps"] .. " >> ~/mpv_unk_fps.log") 
+            os.execute("echo [$(date)] \"" .. mp.get_property("path") .. "\" " .. _global.temp["fps"] .. " >> ~/mpv_unk_fps.log") 
         end
         return _global.temp["fps"]
     end
@@ -393,5 +386,5 @@ if (_global.options["xrandr"] == true and _global.options.exitmode ~= "") then
     end
     mp.register_event("shutdown", revertDrr)
 end
-mp.observe_property("estimated-vf-fps", "native", main)
+mp.observe_property("fps", "string", main)
 mp.add_key_binding(_global.options["osdkey"], mp.get_script_name(), osdEcho, {repeatable=true})

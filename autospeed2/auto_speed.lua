@@ -75,7 +75,7 @@ function notInt(integer)
 end
 
 function osdEcho()
-    if (_global.options["osd"] == true) then
+    if (_global.temp ~= nil and _global.options["osd"] == true) then
         mp.osd_message(_global.temp["output"], _global.options["osdtime"])
     end
 end

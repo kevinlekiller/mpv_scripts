@@ -114,7 +114,14 @@ getOptions()
 
 function main()
     _global.temp = {}
-    _global.temp["fps"] = tonumber(mp.get_property("fps"))
+    local fps = mp.get_property("fps")
+    if (fps == nil or fps == "nil property unavailable") then
+        fps = mp.get_property("estimated-vf-fps")
+        if (fps == nil or fps == "nil property unavailable") then
+            return
+        end
+    end
+    _global.temp["fps"] = tonumber(fps)
     if not (_global.temp["fps"]) then
         return
     end
@@ -386,5 +393,5 @@ if (_global.options["xrandr"] == true and _global.options.exitmode ~= "") then
     end
     mp.register_event("shutdown", revertDrr)
 end
-mp.observe_property("fps", "native", main)
+mp.observe_property("estimated-vf-fps", "native", main)
 mp.add_key_binding(_global.options["osdkey"], mp.get_script_name(), osdEcho, {repeatable=true})

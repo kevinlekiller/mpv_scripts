@@ -183,7 +183,7 @@ function getFfprobeFps()
         return _global.temp["fps"]
     end
     local command = {
-        ["cancellable"] = "false",
+        ["cancellable"] = false,
         ["args"] = {
             [1] = "ffprobe",
             [2] = "-select_streams",

@@ -93,7 +93,7 @@ function getOptions()
         ["osdstart"] = "false",
         ["osdtime"]  = "10",
         ["osdkey"]   = "y",
-        ["logfps"]   = "false"
+        ["logfps"]   = "false",
     }
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
@@ -127,12 +127,12 @@ function main(name, fps)
     
     _global.temp["fps"] = getFfprobeFps()
     local wanted_drr = findRefreshRate()
-    
-    _global.temp["drr"] = tonumber(mp.get_property("display-fps"))
-    -- If we didn't get the updated display refresh rate, sleep and try again.
-    if (wanted_drr ~= _global.temp["start_drr"] and wanted_drr > 0 and _global.temp["drr"] == _global.temp["start_drr"]) then
-        os.execute("sleep 1")
-        _global.temp["drr"] = tonumber(mp.get_property("display-fps"))
+
+    if (wanted_drr ~= _global.temp["start_drr"] and wanted_drr > 0) then
+        _global.temp["drr"] = wanted_drr
+        mp.set_property("display-fps", _global.temp["drr"])
+    else
+        _global.temp["drr"] = _global.temp["start_drr"]
     end
 
     if not (_global.confspeed) then

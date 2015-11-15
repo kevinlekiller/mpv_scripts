@@ -3,7 +3,6 @@
     
     Valid --script-opts are (they are all optional):
     autospeed-xrandr=false     true/false - Use xrandr.
-    autospeed-ffprobe=false    true/false - Use ffprobe
     autospeed-display=HDMI1               - Use specified xrandr display, fetch with xrandr -q
     autospeed-exitmode=0x48               - Revert to this mode when exiting mpv, fetch with xrandr --verbose
     autospeed-minspeed=0.9     Number     - Minimum allowable speed to play video at.
@@ -11,10 +10,9 @@
     autospeed-osd=true         true/false - Enable OSD.
     autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
     autospeed-osdkey=y                    - Key to press to show the OSD.
-    autospeed-logfps=false     true/false - Log non known ffprobe fps's to ~/mpv_unk_fps.log
     autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage (most videos have a fixed fps).
 
-    Example: mpv file.mkv --script-opts=autospeed-ffprobe=true,autospeed-minspeed=0.8
+    Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
 --]]
 --[[
     Copyright (C) 2015  kevinlekiller
@@ -38,38 +36,12 @@ local _global = {
     osd_start = mp.get_property_osd("osd-ass-cc/0"),
     osd_end = mp.get_property_osd("osd-ass-cc/1"),
     utils = require 'mp.utils',
-    -- I will keep adding these as I find them.
-    -- You can also pass --script-options=autospeed-logfps=true to log (~/mpv_unk_fps.log) ones not found in this table.
-    -- Some of these are good, they are there to prevent a call to ffprobe.
-    knownFps = {
---        [23.975986]       = 13978/583,
---        [23.976]          = 2997/125,
-        [23.976024627686] = 24000/1001,
---        [23.976044]       = 27021/1127,
---        [23.976101]       = 19061/795,
---        [24]              = 24/1,
---        [25]              = 25/1,
---        [29.969999]       = 2997/100,
---        [29.970030]       = 30000/1001,
---        [30]              = 30/1,
---        [50]              = 50/1,
---        [59.939999]       = 2997/50,
---        [59.94006]        = 19001/317
-    },
     modes = {},
     modeCache = {},
     lastDrr = 0,
     speedCache = {},
     next = next,
 }
-
-function fileExists(path)
-    local test = io.open(path, "r")
-    if (test == nil) then
-        return false
-    end
-    return io.close(test)
-end
 
 function round(number)
     return math.floor(number + 0.5)
@@ -88,7 +60,6 @@ end
 function getOptions()
     _global.options = {
         ["xrandr"]   = "false",
-        ["ffprobe"]  = "false",
         ["display"]  = "HDMI1",
         ["exitmode"] = "",
         ["minspeed"] = "0.9",
@@ -96,13 +67,12 @@ function getOptions()
         ["osd"]      = "false",
         ["osdtime"]  = "10",
         ["osdkey"]   = "y",
-        ["logfps"]   = "false",
         ["estfps"]   = "false",
     }
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if ((key == "xrandr" or key == "ffprobe" or key == "osd" or key == "logfps" or key == "estfps") and opt == "true") then
+            if ((key == "xrandr" or key == "osd" or key == "estfps") and opt == "true") then
                 _global.options[key] = true
             elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime") then
                 local test = tonumber(opt)
@@ -122,8 +92,6 @@ function main(name, fps)
         return
     end
     _global.temp["fps"] = fps
-    getFfprobeFps()
-    _global.temp["fps"] = _global.knownFps[_global.temp["fps"]]
     local wanted_drr = findRefreshRate()
     
     if (wanted_drr ~= _global.temp["drr"]) then
@@ -139,7 +107,7 @@ function main(name, fps)
         if (_global.temp["speed"] > 0 and _global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
             mp.set_property("speed", _global.temp["speed"])
         else
-            _global.temp["speed"] = _global.confspeed
+            _global.temp["speed"] = _global.confSpeed
         end
     end
 end
@@ -150,65 +118,10 @@ function setOSD()
         "{\\b1}Current  monitor refresh rate{\\b0}\\h\\h" .. _global.temp["drr"] .. "Hz\\N" ..
         "{\\b1}Original video fps{\\b0}\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h" .. _global.temp["fps"] .. "fps\\N" ..
         "{\\b1}Current  video fps{\\b0}\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h\\h" .. (_global.temp["fps"] * _global.temp["speed"]) .. "fps\\N" ..
-        "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.confspeed .. "x\\N" ..
+        "{\\b1}Original mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.confSpeed .. "x\\N" ..
         "{\\b1}Current  mpv speed setting{\\b0}\\h\\h\\h\\h\\h\\h" .. _global.temp["speed"] .. "x" ..
         _global.osd_end
     )
-end
-
-function getFfprobeFps()
-    -- Even if the user doesn't use ffprobe, we can use known values.
-    if (_global.knownFps[_global.temp["fps"]]) then
-        return
-    end
-    _global.knownFps[_global.temp["fps"]] = _global.temp["fps"]
-    if (_global.options["ffprobe"] ~= true) then
-        return
-    end
-    -- Get video file name.
-    local video = mp.get_property("stream-path")
-    if not (fileExists(video)) then
-        return
-    end
-    local command = {
-        ["cancellable"] = false,
-        ["args"] = {
-            [1] = "ffprobe",
-            [2] = "-select_streams",
-            [3] = "v:" .. mp.get_property("ff-vid"),
-            [4] = "-v",
-            [5] = "quiet",
-            [6] = "-show_streams",
-            [7] = "-show_entries",
-            [8] = "stream=r_frame_rate",
-            [9] = "-print_format",
-            [10] = "json",
-            [11] = video
-        }
-    }
-    local output = _global.utils.subprocess(command)
-    if not (output) then
-        return
-    end
-    
-    output = _global.utils.parse_json(output.stdout)
-    if (output == nil or output == error) then
-        return
-    end
-    
-    local first, second = output.streams[1].r_frame_rate:match("(%d+)%D+(%d+)")
-    if (tonumber(first) == nil or tonumber(second) == nil) then
-        return
-    end
-    if (_global.options["logfps"] == true) then
-        os.execute("echo [$(date)] \"" .. mp.get_property("filename") .. "\" [" .. _global.temp["fps"] .. "] = " .. output.streams[1].r_frame_rate .. ", >> ~/mpv_unk_fps.log") 
-    end
-    
-    local ff_fps = first / second
-    if (ff_fps < 1) then
-        return
-    end
-    _global.knownFps[_global.temp["fps"]] = ff_fps
 end
 
 function determineSpeed()
@@ -400,8 +313,8 @@ function start()
         return
     end
     _global.temp["drr"] = _global.temp["start_drr"]
-    if not (_global.confspeed) then
-        _global.confspeed = mp.get_property("speed")
+    if not (_global.confSpeed) then
+        _global.confSpeed = mp.get_property("speed")
     end
     local test = mp.get_property("fps")
     if (test == nil or test == "nil property unavailable") then

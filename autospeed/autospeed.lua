@@ -92,23 +92,12 @@ function main(name, fps)
         return
     end
     _global.temp["fps"] = fps
-    local wanted_drr = findRefreshRate()
-    
-    if (wanted_drr ~= _global.temp["drr"]) then
-        if (wanted_drr ~= _global.temp["start_drr"] and wanted_drr > 0) then
-            _global.temp["drr"] = wanted_drr
-            mp.set_property("display-fps", _global.temp["drr"])
-        else
-            _global.temp["drr"] = _global.temp["start_drr"]
-        end
-    end
-    
-    if (determineSpeed() ~= 0) then
-        if (_global.temp["speed"] > 0 and _global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
-            mp.set_property("speed", _global.temp["speed"])
-        else
-            _global.temp["speed"] = _global.confSpeed
-        end
+    findRefreshRate()
+    determineSpeed()
+    if (_global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
+        mp.set_property_number("speed", _global.temp["speed"])
+    else
+        _global.temp["speed"] = _global.confSpeed
     end
 end
 
@@ -128,7 +117,7 @@ function determineSpeed()
     local id = _global.temp["drr"] .. _global.temp["fps"]
     if (_global.speedCache[id] ~= nil) then
         _global.temp["speed"] = _global.speedCache[id]
-        return 0
+        return
     end
     if (_global.temp["drr"] > _global.temp["fps"]) then
         local difference = (_global.temp["drr"] / _global.temp["fps"])
@@ -176,12 +165,13 @@ end
 function findRefreshRate()
     -- This is to prevent a system call if the screen refresh / video fps has not changed.
     if (_global.temp["drr"] == _global.lastDrr) then
-        return _global.modeCache[_global.temp["drr"]]["clock"]
+        return
     elseif (_global.modeCache[_global.temp["drr"]] ~= nil) then
-        return setXrandrRate(_global.modeCache[_global.temp["drr"]])
+        setXrandrRate(_global.modeCache[_global.temp["drr"]])
+        return
     end
-    if (_global.options["xrandr"] ~= true or getXrandrRates() == false) then
-        return 0
+    if (_global.options["xrandr"] ~= true or getXrandrModes() == false) then
+        return
     end
     local round_fps = round(_global.temp["fps"])
     local iterator = 1
@@ -190,11 +180,12 @@ function findRefreshRate()
     elseif (_global.temp["maxclock"] < round_fps) then
         iterator = round(round_fps / _global.temp["maxclock"])
     else
-        return setXrandrRate(_global.modes[_global.temp["maxclock"]])
+        setXrandrRate(_global.modes[_global.temp["maxclock"]])
+        return
     end
     local smallest = 0
-    local found = {}
-    for rate, val in pairs(_global.modes) do
+    local foundMode = false
+    for rate, mode in pairs(_global.modes) do
         local min = (rate * _global.options["minspeed"])
         local max = (rate * _global.options["maxspeed"])
         for multiplier = 1, iterator do
@@ -204,29 +195,27 @@ function findRefreshRate()
                     local difference = (rate - multiplied_fps)
                     if (smallest == 0 or difference < smallest) then
                         smallest = difference
-                        found = {["mode"] = val["mode"], ["clock"] = val["clock"]}
+                        foundMode = mode
                     end
                 elseif (multiplied_fps > rate) then
                     local difference = (multiplied_fps - rate)
                     if (smallest == 0 or difference < smallest) then
                         smallest = difference
-                        found = {["mode"] = val["mode"], ["clock"] = val["clock"]}
+                        foundMode = mode
                     end
                 else
-                    return setXrandrRate(val)
+                    setXrandrRate(mode)
+                    return
                 end
             end
         end
     end
-    if (_global.next(found) ~= nil) then
-        return setXrandrRate(found)
+    if (foundMode ~= false) then
+        setXrandrRate(foundMode)
     end
-    return 0
 end
 
 function setXrandrRate(mode)
-    _global.modeCache[_global.temp["drr"]] = mode
-    _global.lastDrr = _global.temp["drr"]
     _global.utils.subprocess({
         ["cancellable"] = false,
         ["args"] = {
@@ -234,13 +223,22 @@ function setXrandrRate(mode)
             [2] = "--output",
             [3] = _global.options["display"],
             [4] = "--mode",
-            [5] = mode["mode"]
+            [5] = mode,
         }
     })
-    return mode["clock"]
+    _global.utils.subprocess({
+        ["cancellable"] = false,
+        ["args"] = {
+            [1] = "sleep",
+            [2] = "0.5",
+        }
+    })
+    _global.temp["drr"] = mp.get_property_native("display-fps")
+    _global.modeCache[_global.temp["drr"]] = mode
+    _global.lastDrr = _global.temp["drr"]
 end
 
-function getXrandrRates()
+function getXrandrModes()
     if (_global.next(_global.modes) ~= nil) then
         return true
     end
@@ -252,9 +250,9 @@ function getXrandrRates()
         foundDisp = false,
         foundRes = false,
         count = 0,
-        temp = {},
-        resolution
+        resolution,
     }
+    _global.temp["maxclock"] = 0
     for line in vars.handle:lines() do
         if (vars.foundDisp == false and string.match(line, "^" .. _global.options["display"]) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
             if (string.find(line, "disconnected") ~= nil) then
@@ -275,23 +273,18 @@ function getXrandrRates()
             if (vars.foundRes == true) then -- We found a matching screen resolution.
                 vars.count = vars.count + 1
                 if (vars.count == 1) then -- Log the mode name / pixel clock speed.
-                    local mode, pclock = string.match(line, "%((.+)%)%s+([%d.]+)MHz")
-                    vars.temp = {["mode"] = mode, ["pclock"] = pclock, ["htotal"] = "", ["vtotal"] = "", ["clock"] = ""}
-                elseif (vars.count == 2) then -- Log the total horizontal pixels.
-                    vars.temp["htotal"] = string.match(line, "total%s+(%d+)")
-                elseif (vars.count == 3) then -- Get the total vertical pixels, calculate refresh rate, log it.
-                    local vtotal, clock = string.match(line, "total%s+(%d+).+clock%s+([%d.]+)[KkHh]+z")
+                    vars.temp = string.match(line, "%((.+)%)%s+[%d.]+MHz")
+                elseif (vars.count == 2) then
+                    
+                elseif (vars.count == 3) then
+                    local clock = string.match(line, "total%s+%d+.+clock%s+([%d.]+)[KkHh]+z")
                     clock = round(clock)
-                    if (_global.temp["maxclock"] == nil or _global.temp["maxclock"] < clock) then
+                    if (_global.temp["maxclock"] < clock) then
                         _global.temp["maxclock"] = clock
                     end
-                    _global.modes[clock] = {
-                        ["clock"] = ((vars.temp["pclock"] * 1000000) / (vtotal * vars.temp["htotal"])),
-                        ["mode"] = vars.temp["mode"]
-                    }
+                    _global.modes[clock] = vars.temp
                     vars.count = 0 -- Reset variables to look for another matching resolution.
                     vars.foundRes = false
-                    vars.temp = {}
                 end
             elseif (string.match(line, "^%S") ~= nil) then
                 break -- We reached the next display or EOF.
@@ -308,13 +301,13 @@ end
 function start()
     mp.unobserve_property(start)
     _global.temp = {}
-    _global.temp["start_drr"] = tonumber(mp.get_property("display-fps"))
+    _global.temp["start_drr"] = mp.get_property_native("display-fps")
     if not (_global.temp["start_drr"]) then
         return
     end
     _global.temp["drr"] = _global.temp["start_drr"]
     if not (_global.confSpeed) then
-        _global.confSpeed = mp.get_property("speed")
+        _global.confSpeed = mp.get_property_native("speed")
     end
     local test = mp.get_property("fps")
     if (test == nil or test == "nil property unavailable") then

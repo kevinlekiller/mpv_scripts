@@ -8,7 +8,7 @@
 
 * Should work on all operating systems supported by mpv.
 
-* Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) (*nix only) To accurately calculate your monitor refresh rate and to set your monitors refresh rate closer to the video playback speed based on which refresh rates your monitor supports for the current resolution.
+* Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) (*nix only) To set your monitor refresh rate closer to the video playback speed based on which refresh rates your monitor supports for the current resolution.
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
@@ -30,8 +30,8 @@ The script can read options from mpv's [--script-opts](http://mpv.io/manual/mast
 Valid options (and examples):
 
     autospeed-xrandr=false     true/false - Use xrandr.
-        Xrandr will be used to change the refresh rate of your monitor and
-        find the refresh rate of your monitor using the modeline.
+        Xrandr will be used to change the refresh rate of your monitor based on available
+        refresh rates for the current resolution.
     autospeed-display=HDMI1
         Tell xrandr to use the specified display when changing the refresh
         rate, find these using this command: xrandr | grep -Poi '^.+connected'
@@ -93,19 +93,14 @@ Fetches your monitor refresh rate and video fps from mpv.
 If you have xrandr enabled in the config file:
 
 The supported modes for your monitor and resolution will be  
-parsed using your display name (changed using the --script-opts mentioned above), your monitor will be over or under clocked to the most appropriate refresh rate based on  
-the video speed thresholds (changed using the --script-opts mentioned above).
-
-Accurate monitor refresh rates will be calculated from the modelines of the found xrandr modes, we
-will use this instead of the refresh rate given by mpv.
+parsed using your display name (set using the --script-opts mentioned above), your monitor will be over or under clocked to the most appropriate refresh rate based on  
+the video speed thresholds (set using the --script-opts mentioned above).
 
 The speed is then calculated based on the video fps / display refresh rate.
 
 If the speed is within range of the settings specified in the config file, the mpv speed property is set.
 
-The OSD string is set/printed (configured using the --script-opts mentioned above).
-
-If specified with the --script-opts option, when mpv exits xrandr is called to set that exit mode.
+When mpv exits, the mode will be set to a user specified mode (set using the --script-opts mentioned above)
 
 --------------
 

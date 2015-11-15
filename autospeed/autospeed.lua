@@ -57,10 +57,10 @@ local _global = {
         [59.94006]  = 19001/317
     },
     modes = {},
-    foundModes = false,
     modeCache = {},
-    lastMode = 0,
+    lastDrr = 0,
     speedCache = {},
+    next = next,
 }
 
 function fileExists(path)
@@ -73,10 +73,6 @@ end
 
 function round(number)
     return math.floor(number + 0.5)
-end
-
-function notInt(integer)
-    return (tonumber(integer) == nil)
 end
 
 function osdEcho()
@@ -122,10 +118,10 @@ end
 getOptions()
 
 function main(name, fps)
-    _global.temp["fps"] = fps
-    if (_global.temp["fps"] == nil) then
+    if (fps == nil) then
         return
     end
+    _global.temp["fps"] = fps
     getFfprobeFps()
     _global.temp["fps"] = _global.knownFps[_global.temp["fps"]]
     local wanted_drr = findRefreshRate()
@@ -187,7 +183,7 @@ function getFfprobeFps()
             [5] = "quiet",
             [6] = "-show_streams",
             [7] = "-show_entries",
-            [8] = "stream=avg_frame_rate,r_frame_rate",
+            [8] = "stream=r_frame_rate",
             [9] = "-print_format",
             [10] = "json",
             [11] = video
@@ -199,13 +195,12 @@ function getFfprobeFps()
     end
     
     output = _global.utils.parse_json(output.stdout)
-    -- Make sure we got data, and avg_frame_rate is the same as r_frame_rate, otherwise the video is not constant fps.
-    if (output == nil or output == error or output.streams[1].avg_frame_rate ~= output.streams[1].r_frame_rate) then
+    if (output == nil or output == error) then
         return
     end
     
-    local first, second = output.streams[1].avg_frame_rate:match("(%d+)%D+(%d+)")
-    if (notInt(first) or notInt(second)) then
+    local first, second = output.streams[1].r_frame_rate:match("(%d+)%D+(%d+)")
+    if (tonumber(first) == nil or tonumber(second) == nil) then
         return
     end
     if (_global.options["logfps"] == true) then
@@ -265,15 +260,15 @@ function determineSpeed()
     elseif (_global.temp["drr"] == _global.temp["fps"]) then
         _global.temp["speed"] = 1
     end
-    if (_global.speedCache[_global.temp["drr"]] == nil) then
-        _global.speedCache[_global.temp["drr"]] = {}
-    end
     _global.speedCache[id] = _global.temp["speed"]
 end
 
 function findRefreshRate()
-    if (_global.modeCache[_global.temp["fps"]] == _global.lastMode) then
-        return _global.modeCache[_global.temp["fps"]]
+    -- This is to prevent a system call if the screen refresh / video fps has not changed.
+    if (_global.temp["drr"] == _global.lastDrr) then
+        return _global.modeCache[_global.temp["drr"]]["clock"]
+    elseif (_global.modeCache[_global.temp["drr"]] ~= nil) then
+        return setXrandrRate(_global.modeCache[_global.temp["drr"]])
     end
     if (_global.options["xrandr"] ~= true or getXrandrRates() == false) then
         return 0
@@ -320,8 +315,8 @@ function findRefreshRate()
 end
 
 function setXrandrRate(mode)
-    _global.modeCache[_global.temp["fps"]] = tonumber(mode["clock"])
-    _global.lastMode = tonumber(mode["clock"])
+    _global.modeCache[_global.temp["drr"]] = mode
+    _global.lastDrr = _global.temp["drr"]
     _global.utils.subprocess({
         ["cancellable"] = false,
         ["args"] = {
@@ -336,11 +331,11 @@ function setXrandrRate(mode)
 end
 
 function getXrandrRates()
+    if (_global.next(_global.modes) ~= nil) then
+        return true
+    end
     if not (_global.modes) then
         return false
-    end
-    if (_global.foundModes == true) then
-        return true
     end
     local vars = {
         handle = assert(io.popen("xrandr --verbose")),
@@ -398,7 +393,6 @@ function getXrandrRates()
         _global.modes = false
         return false
     end
-    _global.foundModes = true
 end
 
 function start()
@@ -436,6 +430,7 @@ function start()
     end
 end
 
+-- Wait until we get a video fps.
 function check()
     mp.observe_property("estimated-vf-fps", "string", start)
 end

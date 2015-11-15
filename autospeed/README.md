@@ -52,8 +52,6 @@ Valid options (and examples):
         This is to prevent the video looking like it is in fast forward.
     autospeed-osd=false        true/false - Enable OSD.
         This enables/disables the other autospeed-osd settings.
-    autospeed-osdstart=false   true/false - Show OSD output when a video starts.
-        When a new video is played, the autospeed OSD will be displayed.
     autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
         Self-explanatory.
     autospeed-osdkey=y                    - Key to press to show the OSD.
@@ -63,12 +61,16 @@ Valid options (and examples):
         https://github.com/kevinlekiller/mpv_scripts/blob/master/autospeed/autospeed.lua#L45,
         log it, so you or I can add it to the list,
         which prevents calling ffprobe and speeds up the script.
+    autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage
+        If a video has a variable fps (frames per second), calculate / set the mpv speed based on the current video fps.
+        Most videos have fixed fps, so this option will not do anything for most videos.
+        Because the speed calulation most be done every time the video fps changes, this comes with increased CPU load. On my CPU, the usage goes from ~10% to ~16% with this option enabled.
     
     Examples:
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-ffprobe=true,autospeed-minspeed=0.8,autospeed-xrandr=true
         Setting the options in ~/mpv/mpv.conf:
-            script-opts=autospeed-xrandr=true,autospeed-ffprobe=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdstart=false,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-logfps=false
+            script-opts=autospeed-xrandr=true,autospeed-ffprobe=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-logfps=false,autospeed-estfps=true
 
 --------------
 

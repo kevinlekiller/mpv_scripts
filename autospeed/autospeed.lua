@@ -308,7 +308,7 @@ function findRefreshRate()
             end
         end
     end
-    if (next(found) ~= nil) then
+    if (_global.next(found) ~= nil) then
         return setXrandrRate(found)
     end
     return 0
@@ -389,7 +389,7 @@ function getXrandrRates()
         end
     end
     vars.handle:close()
-    if (next(_global.modes) == nil) then
+    if (_global.next(_global.modes) == nil) then
         _global.modes = false
         return false
     end

@@ -204,7 +204,7 @@ function getFfprobeFps()
         return
     end
     if (_global.options["logfps"] == true) then
-        os.execute("echo [$(date)] \"" .. mp.get_property("filename") .. "\" [" .. _global.temp["fps"] .. "] = " .. output.streams[1].avg_frame_rate .. ", >> ~/mpv_unk_fps.log") 
+        os.execute("echo [$(date)] \"" .. mp.get_property("filename") .. "\" [" .. _global.temp["fps"] .. "] = " .. output.streams[1].r_frame_rate .. ", >> ~/mpv_unk_fps.log") 
     end
     
     local ff_fps = first / second

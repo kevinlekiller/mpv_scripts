@@ -51,14 +51,18 @@ Valid options (and examples):
         Self-explanatory.
     autospeed-osdkey=y                    - Key to press to show the OSD.
         Pressing this key will display the autospeed OSD.
-    autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage
-        If a video has a variable fps (frames per second), calculate / set the mpv speed based on the current video fps.
-        Most videos have fixed fps, so this option will not do anything for most videos.
-        Because the speed calulation most be done every time the video fps changes, this comes with increased CPU load. On my CPU, the usage goes from ~10% to ~16% with this option enabled.
+    autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps
+                                            at the cost of higher CPU usage
+        If a video has a variable fps (frames per second),
+        calculate / set the mpv speed based on the current video fps.
+        This option will do nothing for most because, because only few videos have variable fps.
+        Because the speed calulation must be done every time the video fps changes,
+        this increases CPU load slightly.
+        On my CPU, mpv goes from ~10% to ~16% with this option enabled.
     
     Examples:
         Setting the options at the command line:
-            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8,autospeed-xrandr=true
+            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
         Setting the options in ~/mpv/mpv.conf:
             script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true
 

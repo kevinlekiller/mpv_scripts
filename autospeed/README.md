@@ -10,9 +10,6 @@
 
 * Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) (*nix only) To accurately calculate your monitor refresh rate and to set your monitors refresh rate closer to the video playback speed based on which refresh rates your monitor supports for the current resolution.
 
-* Can use (recommended) [ffprobe](https://www.ffmpeg.org/download.html) to get a more accurate video frame rate. When using the "get_property" command in mpv, the numbers are rounded or truncated (instead of returning 23.97602397602398, it returns 23.976025), 
-ffprobe can be used to get the fps instead to calculate a more accurate speed setting.
-
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
 --------------
@@ -35,8 +32,6 @@ Valid options (and examples):
     autospeed-xrandr=false     true/false - Use xrandr.
         Xrandr will be used to change the refresh rate of your monitor and
         find the refresh rate of your monitor using the modeline.
-    autospeed-ffprobe=false    true/false - Use ffprobe.
-        Ffprobe will be used to fetch the video frame rate.
     autospeed-display=HDMI1
         Tell xrandr to use the specified display when changing the refresh
         rate, find these using this command: xrandr | grep -Poi '^.+connected'
@@ -56,11 +51,6 @@ Valid options (and examples):
         Self-explanatory.
     autospeed-osdkey=y                    - Key to press to show the OSD.
         Pressing this key will display the autospeed OSD.
-    autospeed-logfps=false     true/false - Log non known ffprobe fps's to ~/mpv_unk_fps.log
-        If a ffprobe fps is not here:
-        https://github.com/kevinlekiller/mpv_scripts/blob/master/autospeed/autospeed.lua#L45,
-        log it, so you or I can add it to the list,
-        which prevents calling ffprobe and speeds up the script.
     autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage
         If a video has a variable fps (frames per second), calculate / set the mpv speed based on the current video fps.
         Most videos have fixed fps, so this option will not do anything for most videos.
@@ -68,9 +58,9 @@ Valid options (and examples):
     
     Examples:
         Setting the options at the command line:
-            mpv file.mkv --script-opts=autospeed-ffprobe=true,autospeed-minspeed=0.8,autospeed-xrandr=true
+            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8,autospeed-xrandr=true
         Setting the options in ~/mpv/mpv.conf:
-            script-opts=autospeed-xrandr=true,autospeed-ffprobe=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-logfps=false,autospeed-estfps=true
+            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true
 
 --------------
 
@@ -105,13 +95,6 @@ the video speed thresholds (changed using the --script-opts mentioned above).
 Accurate monitor refresh rates will be calculated from the modelines of the found xrandr modes, we
 will use this instead of the refresh rate given by mpv.
 
-If you have ffprobe enabled in the config file:
-
-If the video is local, ffprobe will be executed on the video file, a more accurate fps will 
-be calculated from this. Some of the ffprobe fps's I've found are added to the script so we
-don't have to call ffprobe for those.  
-If the video is not local, we can still use those known ffprobe fps values.
-
 The speed is then calculated based on the video fps / display refresh rate.
 
 If the speed is within range of the settings specified in the config file, the mpv speed property is set.
@@ -126,11 +109,11 @@ If specified with the --script-opts option, when mpv exits xrandr is called to s
 
 * >
 The display supports 72hz.  
-The video is (ffprobe: 24000 / 1001 aka 23.97602397602398fps, or mpv: 23.976025).  
+The video is 23.97602397602398fps.  
 The display is currently 60hz.  
 The display is set to 72hz.  
 The mpv speed setting is set to 1.001.  
-The video now plays at 24fps (ffprobe: 23.97602397602398fps * 1.001 = 24 or mpv: 23.976025 * 1.001 = 24.000001025fps).  
+The video now plays at 24fps (23.97602397602398fps * 1.001 = 24).  
 Every frame is repeated 3 times, so 1:1 playback.
 
 * >  

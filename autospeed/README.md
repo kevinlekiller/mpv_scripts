@@ -55,7 +55,7 @@ Valid options (and examples):
                                             at the cost of higher CPU usage
         If a video has a variable fps (frames per second),
         calculate / set the mpv speed based on the current video fps.
-        This option will do nothing for most because, because only few videos have variable fps.
+        This option will do nothing for most videos because, because only few videos have variable fps.
         Because the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
         On my CPU, mpv goes from ~10% to ~16% with this option enabled.

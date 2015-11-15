@@ -62,10 +62,10 @@ function getOptions()
         ["xrandr"]   = "false",
         ["display"]  = "HDMI1",
         ["exitmode"] = "",
-        ["minspeed"] = "0.9",
-        ["maxspeed"] = "1.1",
+        ["minspeed"] = 0.9,
+        ["maxspeed"] = 1.1,
         ["osd"]      = "false",
-        ["osdtime"]  = "10",
+        ["osdtime"]  = 10,
         ["osdkey"]   = "y",
         ["estfps"]   = "false",
     }

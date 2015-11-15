@@ -42,19 +42,19 @@ local _global = {
     -- You can also pass --script-options=autospeed-logfps=true to log (~/mpv_unk_fps.log) ones not found in this table.
     -- Some of these are good, they are there to prevent a call to ffprobe.
     knownFps = {
-        [23.975986] = 13978/583,
-        [23.976]    = 2997/125,
-        [23.976025] = 24000/1001,
-        [23.976044] = 27021/1127,
-        [23.976101] = 19061/795,
-        [24]        = 24/1,
-        [25]        = 25/1,
-        [29.969999] = 2997/100,
-        [29.970030] = 30000/1001,
-        [30.000000] = 30/1,
-        [50]        = 50/1,
-        [59.939999] = 2997/50,
-        [59.94006]  = 19001/317
+--        [23.975986]       = 13978/583,
+--        [23.976]          = 2997/125,
+        [23.976024627686] = 24000/1001,
+--        [23.976044]       = 27021/1127,
+--        [23.976101]       = 19061/795,
+--        [24]              = 24/1,
+--        [25]              = 25/1,
+--        [29.969999]       = 2997/100,
+--        [29.970030]       = 30000/1001,
+--        [30]              = 30/1,
+--        [50]              = 50/1,
+--        [59.939999]       = 2997/50,
+--        [59.94006]        = 19001/317
     },
     modes = {},
     modeCache = {},
@@ -168,9 +168,6 @@ function getFfprobeFps()
     -- Get video file name.
     local video = mp.get_property("stream-path")
     if not (fileExists(video)) then
-        if (_global.estimated == false and _global.options["logfps"] == true) then
-            os.execute("echo [$(date)] \"" .. mp.get_property("path") .. "\" " .. _global.temp["fps"] .. " >> ~/mpv_unk_fps.log") 
-        end
         return
     end
     local command = {
@@ -406,7 +403,6 @@ function start()
     if not (_global.confspeed) then
         _global.confspeed = mp.get_property("speed")
     end
-    _global.estimated = false
     local test = mp.get_property("fps")
     if (test == nil or test == "nil property unavailable") then
         if (_global.options["estfps"] ~= true) then
@@ -417,7 +413,6 @@ function start()
             return
         end
         mp.observe_property("estimated-vf-fps", "number", main)
-        _global.estimated = true
     else
         mp.observe_property("fps", "number", main)
     end

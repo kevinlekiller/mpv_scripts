@@ -6,7 +6,7 @@
 
 #####Notes:
 
-* This script is for *nix operating systems. [See here for the Microsoft Windows version]((https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeedwin).
+* This script is for *nix operating systems. [See here for the Microsoft Windows version](https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeedwin).
 
 * Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) To set your monitor refresh rate closer to the video playback speed based on which refresh rates your monitor supports for the current resolution.
 

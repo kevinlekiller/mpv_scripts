@@ -3,8 +3,11 @@
     
     Valid --script-opts are (they are all optional):
     autospeed-xrandr=false     true/false - Use xrandr.
-    autospeed-display=HDMI1               - Use specified xrandr display, fetch with xrandr -q
-    autospeed-exitmode=0x48               - Revert to this mode when exiting mpv, fetch with xrandr --verbose
+    autospeed-display=HDMI1               - Use specified xrandr display, find with xrandr -q
+    autospeed-exitmode=0x48               - Changes the monitor mode (refresh rate) when exiting mpv.
+                                            autospeed-exitmode=false Don't change the mode when exiting. If autospeed-exitmode is not set, this is the default.
+                                            autospeed-exitmode=auto Change the mode to the mode used when mpv started.
+                                            autospeed-exitmode=0x48 Revert to specified mode when exiting mpv. Find a mode using xrandr --verbose (it should look something like 0x123).
     autospeed-minspeed=0.9     Number     - Minimum allowable speed to play video at.
     autospeed-maxspeed=1.1     Number     - Maximum allowable speed to play video at.
     autospeed-osd=true         true/false - Enable OSD.
@@ -62,7 +65,7 @@ function getOptions()
     _global.options = {
         ["xrandr"]   = false,
         ["display"]  = "HDMI1",
-        ["exitmode"] = "",
+        ["exitmode"] = "false",
         ["minspeed"] = 0.9,
         ["maxspeed"] = 1.1,
         ["osd"]      = false,
@@ -282,8 +285,13 @@ function getXrandrModes()
             end
             if (vars.foundRes == true) then -- We found a matching screen resolution.
                 vars.count = vars.count + 1
-                if (vars.count == 1) then -- Log the mode name / pixel clock speed.
-                    vars.temp = string.match(line, "%((.+)%)%s+[%d.]+MHz")
+                if (vars.count == 1) then -- Log the mode name.
+                    vars.mode = string.match(line, "%((.+)%)%s+[%d.]+MHz")
+                    if (_global.temp["origmode"] == nil) then
+                        if (string.find(line, "%*current") ~= nil) then
+                            _global.temp["origmode"] = vars.mode
+                        end
+                    end
                 elseif (vars.count == 2) then
                     
                 elseif (vars.count == 3) then
@@ -292,7 +300,7 @@ function getXrandrModes()
                     if (_global.temp["maxclock"] < clock) then
                         _global.temp["maxclock"] = clock
                     end
-                    _global.modes[clock] = vars.temp
+                    _global.modes[clock] = vars.mode
                     vars.count = 0 -- Reset variables to look for another matching resolution.
                     vars.foundRes = false
                 end
@@ -333,9 +341,13 @@ function start()
         mp.observe_property("fps", "number", main)
     end
     mp.add_key_binding(_global.options["osdkey"], mp.get_script_name(), osdEcho, {repeatable=true})
-    if (_global.options["xrandr"] == true and _global.options.exitmode ~= "") then
+    if (_global.options["xrandr"] == true and _global.options.exitmode ~= "false") then
         function revertDrr()
-            os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.options["exitmode"] .. " &")
+            if (_global.options["exitmode"] == "auto" and _global.temp["origmode"] ~= nil) then
+                os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.temp["origmode"] .. " &")
+            else
+                os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.options["exitmode"] .. " &")
+            end
         end
         mp.register_event("shutdown", revertDrr)
     end

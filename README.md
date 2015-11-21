@@ -1,9 +1,10 @@
 # mpv_scripts
 Various scripts for MPV.
 
-[autospeed](https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeed/): Tries to match up monitor / video speeds for smoother playback. (*nix / windows)
+[autospeed](https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeed/): Tries to match up monitor / video speeds for smoother playback. (*nix)
 
-[autoscaling](https://github.com/kevinlekiller/mpv_scripts/tree/master/autoscaling/): Disable video scaling if video is slightly smaller than window size. (*nix / windows)
+[autospeedwin](https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeedwin/): Tries to match up monitor / video speeds for smoother playback. (Windows)
 
-[maximize](https://github.com/kevinlekiller/mpv_scripts/tree/master/maximize/): Keeps the mpv window maximized when not in fullscreen. (windows)
+[autoscaling](https://github.com/kevinlekiller/mpv_scripts/tree/master/autoscaling/): Disable video scaling if video is slightly smaller than window size. (*nix / Windows)
 
+[maximize](https://github.com/kevinlekiller/mpv_scripts/tree/master/maximize/): Keeps the mpv window maximized when not in fullscreen. (Windows)

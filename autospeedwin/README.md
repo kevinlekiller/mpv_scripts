@@ -1,4 +1,4 @@
-# autospeed
+# autospeedwin
 
 ######Lua script for mpv to adjust monitor refresh rate and video speed for almost 1:1 playback.
 
@@ -6,9 +6,9 @@
 
 #####Notes:
 
-* This script is for *nix operating systems. [See here for the Microsoft Windows version]((https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeedwin).
+* This script is for the Microsoft Windows operating systems, [see here for the *nix version](https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeed).
 
-* Can use (recommended) [xrandr](http://www.x.org/wiki/Projects/XRandR/) To set your monitor refresh rate closer to the video playback speed based on which refresh rates your monitor supports for the current resolution.
+* Can use (recommended) [nircmd](http://www.nirsoft.net/utils/nircmd.html) To set your monitor refresh rate closer to the video playback speed.
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
@@ -29,16 +29,25 @@ The script can read options from mpv's [--script-opts](http://mpv.io/manual/mast
 
 Valid options (and examples):
 
-    autospeed-xrandr=false     true/false - Use xrandr.
-        Xrandr will be used to change the refresh rate of your monitor based on available
-        refresh rates for the current resolution.
-    autospeed-display=HDMI1
-        Tell xrandr to use the specified display when changing the refresh
-        rate, find these using this command: xrandr | grep -Poi '^.+connected'
-    autospeed-exitmode=0x48
-        Revert to this mode when exiting mpv. Find using this command: xrandr --verbose
-        For example, "0x48" in the following string is the
-        mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
+    autospeed-nircmd=false      true/false - Use nircmd to change the refresh rate of your monitor.
+        nircmd will be used to change the refresh rate of your monitor based on options listed below.
+    autospeed-nircmdc="nircmdc" String     - Path to nircmdc executable file.
+                                             If not set, nircmdc will be searched in Windows PATH variable.
+        If yous set this "" or "nircmdc", Windows will look in your PATH for nircmdc,
+        otherwise you can specify a path, for example "c:\programs\nircmdc.exe"
+    autospeed-dwidth=1920       Number     - Display width.
+        This will be sent to nircmd when setting the refresh rate.
+    autospeed-dheight=1080      Number     - Display height.
+        This will be sent to nircmd when setting the refresh rate.
+    autospeed-bdepth=32         Number     - Display bit depth.
+        This will be sent to nircmd when setting the refresh rate.
+    autospeed-rates="60"        String     - String of refresh rates your monitor supports and you want
+                                             to use, separated by commas. Nircmd seems to prefer rounded
+                                             numbers, 72 instead of 71.92 for example.
+                                             Examples: autospeed-rates="60" | autospeed-rates="50,60,72"
+        This is the list of refresh rates you want autospeed to use when it changes your monitor refresh rate.
+    autospeed-exitrate=60       Number     - Which refresh rate to set when exiting mpv. Set to 0 to ignore.
+        When mpv exits, if you want your monitor to go back to a specific refresh rate.
     autospeed-minspeed=0.9     Number - Minimum allowable speed to play video at.
         Do not change speed setting if the calculated speed is lower than this.
         This is to prevent the video looking like it is in slow motion.
@@ -69,9 +78,9 @@ Valid options (and examples):
     
     Examples:
         Setting the options at the command line:
-            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
+            mpv file.mkv --script-opts=autospeed-estfps=true,autospeed-minspeed=0.8
         Setting the options in ~/mpv/mpv.conf:
-            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
+            script-opts=autospeed-nircmd=true,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------
 
@@ -80,34 +89,8 @@ Valid options (and examples):
 Put the file inside the mpv/scripts folder, see the [mpv man page](https://github.com/mpv-player/mpv/blob/master/DOCS/man/mpv.rst#files) for the correct path.
 
 
-Download link:  
-[autospeed.lua](https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed/autospeed.lua)  
-
-You can use programs like `wget` or `curl` to download from the command line.
-
-For example, to download using curl on *nix:
-
-`mkdir -p ~/.mpv/scripts && curl -o ~/.mpv/scripts/autospeed.lua https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed/autospeed.lua`
-
---------------
-
-#####Detailed Description:
-
-This is roughly the order of events that happen:
-
-Fetches your monitor refresh rate and video fps from mpv.
-
-If you have xrandr enabled in the config file:
-
-The supported modes for your monitor and resolution will be  
-parsed using your display name (set using the --script-opts mentioned above), your monitor will be over or under clocked to the most appropriate refresh rate based on  
-the video speed thresholds (set using the --script-opts mentioned above).
-
-The speed is then calculated based on the video fps / display refresh rate.
-
-If the speed is within range of the settings specified in the config file, the mpv speed property is set.
-
-When mpv exits, the mode will be set to a user specified mode (set using the --script-opts mentioned above)
+Direct download link:  
+[autospeed.lua](https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeedwin/autospeedwin.lua)  
 
 --------------
 

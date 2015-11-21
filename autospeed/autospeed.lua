@@ -255,7 +255,7 @@ function getXrandrModes()
     }
     _global.temp["maxclock"] = 0
     for line in vars.handle:lines() do
-        if (vars.foundDisp == false and string.match(line, vars.disp) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
+        if (vars.foundDisp == false and string.match(line, "^" .. vars.disp) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
             if (string.find(line, "disconnected") ~= nil) then
                 break -- Wrong display name was given.
             else

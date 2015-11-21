@@ -11,6 +11,7 @@
     autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
     autospeed-osdkey=y                    - Key to press to show the OSD.
     autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage (most videos have a fixed fps).
+    autospeed-spause           true/false - Pause video while switching display modes. This can fix issues with vdpau.
 
     Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
 --]]
@@ -59,20 +60,21 @@ end
 
 function getOptions()
     _global.options = {
-        ["xrandr"]   = "false",
+        ["xrandr"]   = false,
         ["display"]  = "HDMI1",
         ["exitmode"] = "",
         ["minspeed"] = 0.9,
         ["maxspeed"] = 1.1,
-        ["osd"]      = "false",
+        ["osd"]      = false,
         ["osdtime"]  = 10,
         ["osdkey"]   = "y",
-        ["estfps"]   = "false",
+        ["estfps"]   = false,
+        ["spause"]   = false,
     }
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if ((key == "xrandr" or key == "osd" or key == "estfps") and opt == "true") then
+            if ((key == "xrandr" or key == "osd" or key == "estfps" or key == "spause") and opt == "true") then
                 _global.options[key] = true
             elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime") then
                 local test = tonumber(opt)
@@ -216,6 +218,10 @@ function findRefreshRate()
 end
 
 function setXrandrRate(mode)
+    local paused = mp.get_property("pause")
+    if (_global.options["spause"] == true and paused ~= "yes") then
+        mp.set_property("pause", "yes")
+    end
     _global.utils.subprocess({
         ["cancellable"] = false,
         ["args"] = {
@@ -226,6 +232,9 @@ function setXrandrRate(mode)
             [5] = mode,
         }
     })
+    if (_global.options["spause"] == true and paused ~= "yes") then
+        mp.set_property("pause", "no")
+    end
     _global.utils.subprocess({
         ["cancellable"] = false,
         ["args"] = {

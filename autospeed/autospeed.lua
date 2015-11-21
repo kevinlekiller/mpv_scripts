@@ -8,6 +8,7 @@
                                             autospeed-exitmode=false Don't change the mode when exiting. If autospeed-exitmode is not set, this is the default.
                                             autospeed-exitmode=auto Change the mode to the mode used when mpv started.
                                             autospeed-exitmode=0x48 Revert to specified mode when exiting mpv. Find a mode using xrandr --verbose (it should look something like 0x123).
+    autospeed-interlaced=false true/false - Allow using a interlaced mode when switching refresh rates with xrandr?
     autospeed-minspeed=0.9     Number     - Minimum allowable speed to play video at.
     autospeed-maxspeed=1.1     Number     - Maximum allowable speed to play video at.
     autospeed-osd=true         true/false - Enable OSD.
@@ -63,21 +64,22 @@ end
 
 function getOptions()
     _global.options = {
-        ["xrandr"]   = false,
-        ["display"]  = "HDMI1",
-        ["exitmode"] = "false",
-        ["minspeed"] = 0.9,
-        ["maxspeed"] = 1.1,
-        ["osd"]      = false,
-        ["osdtime"]  = 10,
-        ["osdkey"]   = "y",
-        ["estfps"]   = false,
-        ["spause"]   = false,
+        ["xrandr"]     = false,
+        ["display"]    = "HDMI1",
+        ["exitmode"]   = "false",
+        ["interlaced"] = false,
+        ["minspeed"]   = 0.9,
+        ["maxspeed"]   = 1.1,
+        ["osd"]        = false,
+        ["osdtime"]    = 10,
+        ["osdkey"]     = "y",
+        ["estfps"]     = false,
+        ["spause"]     = false,
     }
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if ((key == "xrandr" or key == "osd" or key == "estfps" or key == "spause") and opt == "true") then
+            if ((key == "xrandr" or key == "osd" or key == "estfps" or key == "spause" or key == "interlaced") and opt == "true") then
                 _global.options[key] = true
             elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime") then
                 local test = tonumber(opt)
@@ -292,15 +294,23 @@ function getXrandrModes()
                             _global.temp["origmode"] = vars.mode
                         end
                     end
+                    vars.interlaced = false
+                    if (string.find(line, "Interlace") ~= nil) then
+                        vars.interlaced = true
+                    end
                 elseif (vars.count == 2) then
                     
                 elseif (vars.count == 3) then
-                    local clock = string.match(line, "total%s+%d+.+clock%s+([%d.]+)[KkHh]+z")
-                    clock = round(clock)
-                    if (_global.temp["maxclock"] < clock) then
-                        _global.temp["maxclock"] = clock
+                    if (_global.options["interlaced"] == false and vars.interlaced == true) then
+                        
+                    else
+                        local clock = string.match(line, "total%s+%d+.+clock%s+([%d.]+)[KkHh]+z")
+                        clock = round(clock)
+                        if (_global.temp["maxclock"] < clock) then
+                            _global.temp["maxclock"] = clock
+                        end
+                        _global.modes[clock] = vars.mode
                     end
-                    _global.modes[clock] = vars.mode
                     vars.count = 0 -- Reset variables to look for another matching resolution.
                     vars.foundRes = false
                 end

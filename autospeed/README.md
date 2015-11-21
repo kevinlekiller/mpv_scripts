@@ -59,12 +59,19 @@ Valid options (and examples):
         Because the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
         On my CPU, mpv goes from ~10% to ~16% with this option enabled.
+    autospeed-spause           true/false - Pause video while switching display modes.
+                                            This can fix issues with vdpau.
+        Before switching the display mode (refresh rate), pause the video, unpause after
+        it is switched. This is to fix an issue with vdpau hardware decoding where
+        the video will become corrupted. This can be used also if you don't want to miss
+        some of the video while your display is blank (my display is blank for ~5 seconds
+        while switching modes).
     
     Examples:
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
         Setting the options in ~/mpv/mpv.conf:
-            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true
+            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------
 

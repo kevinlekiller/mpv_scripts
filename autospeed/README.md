@@ -54,6 +54,10 @@ Valid options (and examples):
             Find a mode using this command: xrandr --verbose
             For example, "0x48" in the following string is the
             mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
+    autospeed-interlaced=false
+        true/false - Allow using a interlaced mode when switching refresh rates with xrandr?
+        autospeed-interlaced=false Do not use interlaced modes.
+        autospeed-interlaced=true  Use interlaced modes.
     autospeed-minspeed=0.9
         Number - Minimum allowable speed to play video at.
         Does not change speed setting if the calculated speed is lower than this.

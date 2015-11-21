@@ -12,7 +12,7 @@
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
-* It works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync). If your videos stutter with `--video-sync=display-resample` and autospeed, you might have to disable your compositor (ALT+SHIFT+F12 on KDE), due to vsync timing issues caused by the compositor. If you can't disable the compositor, use `--video-sync=audio` which still produces acceptable results..
+* It works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync). If your videos stutter with `--video-sync=display-resample` and autospeed, you might have to disable your compositor (ALT+SHIFT+F12 on KDE), due to vsync timing issues caused by the compositor. If you can't disable the compositor, use `--video-sync=audio` which still produces acceptable results.
 
 --------------
 

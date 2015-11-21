@@ -35,38 +35,53 @@ The script can read options from mpv's [--script-opts](http://mpv.io/manual/mast
 
 Valid options (and examples):
 
-    autospeed-xrandr=false     true/false - Use xrandr.
+    autospeed-xrandr=false
+        true/false - Use xrandr.
         Xrandr will be used to change the refresh rate of your monitor based on available
         refresh rates for the current resolution.
     autospeed-display=HDMI1
         Tell xrandr to use the specified display when changing the refresh
         rate, find these using this command: xrandr | grep -Poi '^.+connected'
-    autospeed-exitmode=0x48
-        Revert to this mode when exiting mpv. Find using this command: xrandr --verbose
-        For example, "0x48" in the following string is the
-        mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
-    autospeed-minspeed=0.9     Number - Minimum allowable speed to play video at.
-        Do not change speed setting if the calculated speed is lower than this.
+    autospeed-exitmode=auto
+        Sets the refresh rate of the monitor when exiting mpv.
+        autospeed-exitmode=auto
+            Sets the monitor refresh rate back to the original refresh rate when mpv started.
+        autospeed-exitmode=false
+            Does not change the monitor refresh rate when exiting mpv.
+            If you do not set autospeed-exitmode then this is the default.
+        autospeed-exitmode=0x123
+            This will set a specified mode when exiting.
+            Find a mode using this command: xrandr --verbose
+            For example, "0x48" in the following string is the
+            mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
+    autospeed-minspeed=0.9
+        Number - Minimum allowable speed to play video at.
+        Does not change speed setting if the calculated speed is lower than this.
         This is to prevent the video looking like it is in slow motion.
-    autospeed-maxspeed=1.1     Number - Maximum allowable speed to play video at.
-        Do not change speed setting if the calculated speed is higher than this.
+    autospeed-maxspeed=1.1
+        Number - Maximum allowable speed to play video at.
+        Does not change speed setting if the calculated speed is higher than this.
         This is to prevent the video looking like it is in fast forward.
-    autospeed-osd=false        true/false - Enable OSD.
+    autospeed-osd=false
+        true/false - Enable OSD.
         This enables/disables the other autospeed-osd settings.
-    autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
+    autospeed-osdtime=10
+        Number - How many seconds the OSD will be shown.
         Self-explanatory.
-    autospeed-osdkey=y                    - Key to press to show the OSD.
+    autospeed-osdkey=y
+        This can be a letter or number.
+        Key to press to show the OSD.
         Pressing this key will display the autospeed OSD.
-    autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps
-                                            at the cost of higher CPU usage
+    autospeed-estfps=false
+        true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage
         If a video has a variable fps (frames per second),
         calculate / set the mpv speed based on the current video fps.
         This option will do nothing for most videos because, because only few videos have variable fps.
         Because the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
         On my CPU, mpv goes from ~10% to ~16% with this option enabled.
-    autospeed-spause           true/false - Pause video while switching display modes.
-                                            This can fix issues with vdpau.
+    autospeed-spause
+        true/false - Pause video while switching display modes.
         Before switching the display mode (refresh rate), pause the video, unpause after
         it is switched. This is to fix an issue with vdpau hardware decoding where
         the video will become corrupted. This can be used also if you don't want to miss
@@ -77,7 +92,7 @@ Valid options (and examples):
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
         Setting the options in ~/mpv/mpv.conf:
-            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=0x48,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
+            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------
 

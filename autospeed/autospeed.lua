@@ -9,6 +9,10 @@
                                             autospeed-exitmode=auto Change the mode to the mode used when mpv started.
                                             autospeed-exitmode=0x48 Revert to specified mode when exiting mpv. Find a mode using xrandr --verbose (it should look something like 0x123).
     autospeed-interlaced=false true/false - Allow using a interlaced mode when switching refresh rates with xrandr?
+    autospeed-mblacklist=false            - List of modes to blacklist.
+                                            Modes in this list will be ignored.
+                                            If more than one mode is specified, seperate them by comma.
+                                            Example: autospeed-mblacklist="0x128,0x2fa"
     autospeed-minspeed=0.9     Number     - Minimum allowable speed to play video at.
     autospeed-maxspeed=1.1     Number     - Maximum allowable speed to play video at.
     autospeed-osd=true         true/false - Enable OSD.
@@ -68,6 +72,7 @@ function getOptions()
         ["display"]    = "HDMI1",
         ["exitmode"]   = "false",
         ["interlaced"] = false,
+        ["mblacklist"] = "false",
         ["minspeed"]   = 0.9,
         ["maxspeed"]   = 1.1,
         ["osd"]        = false,
@@ -90,6 +95,18 @@ function getOptions()
                 _global.options[key] = opt
             end
         end
+    end
+    if (_global.options["interlaced"] == "false") then
+        _global.options["interlaced"] = false
+    end
+    if (_global.options["mblacklist"] == "false") then
+        _global.options["mblacklist"] = false
+    else
+        local tmp_blacklist = {}
+        for blacklist in string.gmatch(_global.options["mblacklist"], '[^,]+') do
+            tmp_blacklist[blacklist] = true
+        end
+        _global.options["mblacklist"] = tmp_blacklist
     end
 end
 getOptions()
@@ -301,8 +318,8 @@ function getXrandrModes()
                 elseif (vars.count == 2) then
                     
                 elseif (vars.count == 3) then
-                    if (_global.options["interlaced"] == false and vars.interlaced == true) then
-                        
+                    if ((_global.options["interlaced"] == false and vars.interlaced == true) or _global.options["mblacklist"][vars.mode] ~= nil) then
+                        -- ignore these modes
                     else
                         local clock = string.match(line, "total%s+%d+.+clock%s+([%d.]+)[KkHh]+z")
                         clock = round(clock)

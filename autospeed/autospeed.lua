@@ -251,14 +251,15 @@ function getXrandrModes()
         foundRes = false,
         count = 0,
         resolution,
+        disp = string.gsub(_global.options["display"], "%-", "%%-")
     }
     _global.temp["maxclock"] = 0
     for line in vars.handle:lines() do
-        if (vars.foundDisp == false and string.match(line, "^" .. _global.options["display"]) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
+        if (vars.foundDisp == false and string.match(line, vars.disp) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
             if (string.find(line, "disconnected") ~= nil) then
                 break -- Wrong display name was given.
             else
-                local res = string.match(line, "^" .. _global.options["display"] .. "%D+([%dx]+)") -- Find current monitor resolution.
+                local res = string.match(line, "^" .. vars.disp .. "%D+([%dx]+)") -- Find current monitor resolution.
                 if (res ~= nil and res ~= "") then
                     vars.resolution = res
                     vars.foundDisp = true

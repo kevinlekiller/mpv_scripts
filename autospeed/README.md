@@ -55,7 +55,8 @@ Valid options (and examples):
             For example, "0x48" in the following string is the
             mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
     autospeed-interlaced=false
-        true/false
+        true/false - If set to false, the script will ignore a refresh rate if
+                     it is interlaced.
         autospeed-interlaced=false Do not use interlaced modes.
         autospeed-interlaced=true  Use interlaced modes.
     autospeed-mblacklist=false

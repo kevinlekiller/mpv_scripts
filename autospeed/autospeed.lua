@@ -2,7 +2,8 @@
     See script details on https://github.com/kevinlekiller/mpv_scripts
     
     Valid --script-opts are (they are all optional):
-    autospeed-xrandr=false     true/false - Use xrandr.
+    autospeed-xrandr=false     true/false - Use xrandr to change display refresh rate?.
+    autospeed-speed=true       true/false - Adjust speed of the video?
     autospeed-display=HDMI1               - Use specified xrandr display, find with xrandr -q
     autospeed-exitmode=0x48               - Changes the monitor mode (refresh rate) when exiting mpv.
                                             autospeed-exitmode=false Don't change the mode when exiting. If autospeed-exitmode is not set, this is the default.
@@ -21,7 +22,7 @@
     autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage (most videos have a fixed fps).
     autospeed-spause           true/false - Pause video while switching display modes. This can fix issues with vdpau.
 
-    Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
+    Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
 --]]
 --[[
     Copyright (C) 2015  kevinlekiller
@@ -69,6 +70,7 @@ end
 function getOptions()
     _global.options = {
         ["xrandr"]     = false,
+        ["speed"]      = true,
         ["display"]    = "HDMI1",
         ["exitmode"]   = "false",
         ["interlaced"] = false,
@@ -84,8 +86,10 @@ function getOptions()
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if ((key == "xrandr" or key == "osd" or key == "estfps" or key == "spause" or key == "interlaced") and opt == "true") then
-                _global.options[key] = true
+            if (key == "xrandr" or key == "osd" or key == "estfps" or key == "spause" or key == "interlaced" or key == "speed") then
+                if (opt == "true") then
+                    _global.options[key] = true
+                end
             elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime") then
                 local test = tonumber(opt)
                 if (test ~= nil) then
@@ -95,9 +99,6 @@ function getOptions()
                 _global.options[key] = opt
             end
         end
-    end
-    if (_global.options["interlaced"] == "false") then
-        _global.options["interlaced"] = false
     end
     if (_global.options["mblacklist"] == "false") then
         _global.options["mblacklist"] = false
@@ -117,9 +118,13 @@ function main(name, fps)
     end
     _global.temp["fps"] = fps
     findRefreshRate()
-    determineSpeed()
-    if (_global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
-        mp.set_property_number("speed", _global.temp["speed"])
+    if (_global.options["speed"] == true) then
+        determineSpeed()
+        if (_global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
+            mp.set_property_number("speed", _global.temp["speed"])
+        else
+            _global.temp["speed"] = _global.confSpeed
+        end
     else
         _global.temp["speed"] = _global.confSpeed
     end

@@ -39,6 +39,11 @@ Valid options (and examples):
         true/false - Use xrandr.
         Xrandr will be used to change the refresh rate of your monitor based on available
         refresh rates for the current resolution.
+    autospeed-speed=true
+        true/false - Adjust speed of the video?
+        Defaults to true.
+        If set to true, the mpv speed setting will be changed based on the video
+        fps and display refresh rate.
     autospeed-display=HDMI1
         Tell xrandr to use the specified display when changing the refresh
         rate, find these using this command: xrandr | grep -Poi '^.+connected'
@@ -101,9 +106,9 @@ Valid options (and examples):
     
     Examples:
         Setting the options at the command line:
-            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-minspeed=0.8
+            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
         Setting the options in ~/mpv/mpv.conf:
-            script-opts=autospeed-xrandr=true,autospeed-display=HDMI1,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
+            script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-display=HDMI1,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------
 

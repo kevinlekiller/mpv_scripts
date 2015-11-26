@@ -13,10 +13,8 @@
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
 * It works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
-If your videos stutter with `--video-sync=display-resample` and autospeed, this is possibly due to a vsync timing issue, I've found 2 solutions that worked for me:  
-You can use the X11 backend in mpv : `--vo=opengl:backend=x11`  
-You can disable your compositor (`ALT+SHIFT+F12` on KDE, you can enable the option to disable the compositor while fullscreen also).  
-If both solutions fail, use `--video-sync=audio` which still produces acceptable results.
+If your videos stutter with `--video-sync=display-resample` and autospeed, this is possibly due to a vsync timing issue, which can be caused the compositor you use. I've switched my compositor to [compton](https://github.com/chjj/compton) with `--vsync opengl-swc --backend glx` options which solved the issue.  
+You can use `--video-sync=audio` which still produces acceptable results.
 
 --------------
 

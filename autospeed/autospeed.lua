@@ -323,7 +323,7 @@ function getXrandrModes()
                 elseif (vars.count == 2) then
                     
                 elseif (vars.count == 3) then
-                    if ((_global.options["interlaced"] == false and vars.interlaced == true) or _global.options["mblacklist"][vars.mode] ~= nil) then
+                    if ((_global.options["interlaced"] == false and vars.interlaced == true) or (_global.options["mblacklist"] ~= false and _global.options["mblacklist"][vars.mode] ~= nil)) then
                         -- ignore these modes
                     else
                         local clock = string.match(line, "total%s+%d+.+clock%s+([%d.]+)[KkHh]+z")

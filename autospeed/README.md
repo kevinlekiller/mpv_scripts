@@ -70,12 +70,14 @@ Valid options (and examples):
             autospeed-mblacklist=0x38d
     autospeed-minspeed=0.9
         Number - Minimum allowable speed to play video at.
-        Does not change speed setting if the calculated speed is lower than this.
+        Does not change mpv's speed setting if the calculated speed is lower than this.
         This is to prevent the video looking like it is in slow motion.
+        A value of 0.9 allows playing the video at minimum, 10% slower.
     autospeed-maxspeed=1.1
         Number - Maximum allowable speed to play video at.
-        Does not change speed setting if the calculated speed is higher than this.
+        Does not change mpv's speed setting if the calculated speed is higher than this.
         This is to prevent the video looking like it is in fast forward.
+        A value of 1.1 allows playing the video at maximum, 10% faster.
     autospeed-osd=false
         true/false - Enable OSD.
         This enables/disables the other autospeed-osd settings.
@@ -85,7 +87,7 @@ Valid options (and examples):
     autospeed-osdkey=y
         This follows the same standard as mpv's input.conf.
         Key to press to show the OSD.
-        Pressing this key will display the autospeed OSD.
+        Pressing this key will display autospeed infortmation on mpv's OSD.
     autospeed-estfps=false
         true/false - Calculate/change speed if a video has a variable frame rate 
                      at the cost of higher CPU usage.
@@ -95,7 +97,7 @@ Valid options (and examples):
         For example, most (all?) bluray videos have variable frame rates.
         Since the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
-        On my CPU, mpv goes from ~10% to ~16% CPU usage with this option enabled.
+        On my computer, mpv goes from ~10% to ~16% CPU usage with this option enabled.
     autospeed-spause
         true/false - Pause video while switching display modes.
         Before switching the display mode (refresh rate), pause the video, unpause after

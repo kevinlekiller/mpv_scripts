@@ -71,8 +71,8 @@ function getOptions()
     _global.options = {
         ["xrandr"]     = false,
         ["speed"]      = true,
-        ["display"]    = "HDMI1",
-        ["exitmode"]   = "false",
+        ["display"]    = "auto",
+        ["exitmode"]   = "auto",
         ["interlaced"] = false,
         ["mblacklist"] = "false",
         ["minspeed"]   = 0.9,

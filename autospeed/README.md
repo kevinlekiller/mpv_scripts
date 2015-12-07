@@ -130,7 +130,7 @@ Valid options (and examples):
 
 #####Installation:
 
-Put the file inside the mpv/scripts folder, see the [mpv man page](https://github.com/mpv-player/mpv/blob/master/DOCS/man/mpv.rst#files) for the correct path.
+Put the file inside the mpv/scripts folder, see the [mpv man page](https://github.com/mpv-player/mpv/blob/master/DOCS/man/mpv.rst#files) for the correct path, by default this should be `~/.config/mpv/scripts/`.
 
 
 Download link:  
@@ -138,9 +138,9 @@ Download link:
 
 You can use programs like `wget` or `curl` to download from the command line.
 
-For example, to download using curl on *nix:
+For example, to download using curl:
 
-`mkdir -p ~/.mpv/scripts && curl -o ~/.mpv/scripts/autospeed.lua https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed/autospeed.lua`
+`mkdir -p ~/.config/mpv/scripts && curl -o ~/.config/mpv/scripts/autospeed.lua https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeed/autospeed.lua`
 
 --------------
 

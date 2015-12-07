@@ -123,7 +123,7 @@ Valid options (and examples):
     Examples:
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
-        Setting the options in ~/mpv/mpv.conf:
+        Setting the options in ~/.config/mpv/mpv.conf :
             script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-display=auto,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------

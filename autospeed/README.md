@@ -33,22 +33,25 @@ The script can read options from mpv's [--script-opts](http://mpv.io/manual/mast
 
 Valid options (and examples):
 
-    autospeed-xrandr=false
+    autospeed-xrandr=true
+        Default: false
         true/false - Use xrandr.
         Xrandr will be used to change the refresh rate of your monitor based on available
         refresh rates for the current resolution.
     autospeed-speed=true
+        Default: true
         true/false - Adjust speed of the video?
-        Defaults to true.
         If set to true, the mpv speed setting will be changed based on the video
         fps and display refresh rate.
     autospeed-display=auto
+        Default: auto
         If set to "auto", the primary connected monitor will be used with xrandr.
         If set to your monitors name, tell xrandr to use the specified display
         when changing the refresh rate.
         Find your monitor name using this command: xrandr | grep -Poi '^.+connected'
         It should look something like "HDMI-0".
     autospeed-exitmode=auto
+        Default: auto
         Sets the refresh rate of the monitor when exiting mpv.
         autospeed-exitmode=auto
             Sets the monitor refresh rate back to the original refresh rate when mpv started.
@@ -61,36 +64,44 @@ Valid options (and examples):
             For example, "0x48" in the following string is the
             mode: 1920x1080 (0x48) 148.500MHz +HSync +VSync *current +preferred
     autospeed-interlaced=false
+        Default: false
         true/false - If set to false, the script will ignore a refresh rate if
                      it is interlaced.
         autospeed-interlaced=false Do not use interlaced modes.
         autospeed-interlaced=true  Use interlaced modes.
     autospeed-mblacklist=false
+        Default: false
         Modes in this list will be ignored. Find modes with xrandr --verbose
         If more than one mode is specified, seperate them by comma.
         Examples:
             autospeed-mblacklist="0x128,0x2fa"
             autospeed-mblacklist=0x38d
-    autospeed-minspeed=0.9
+    autospeed-minspeed=0.92
+        Default: 0.9
         Number - Minimum allowable speed to play video at.
         Does not change mpv's speed setting if the calculated speed is lower than this.
         This is to prevent the video looking like it is in slow motion.
         A value of 0.9 allows playing the video at minimum, 10% slower.
-    autospeed-maxspeed=1.1
+    autospeed-maxspeed=1.08
+        Default: 1.1
         Number - Maximum allowable speed to play video at.
         Does not change mpv's speed setting if the calculated speed is higher than this.
         This is to prevent the video looking like it is in fast forward.
         A value of 1.1 allows playing the video at maximum, 10% faster.
-    autospeed-osd=false
+    autospeed-osd=true
+        Default: false
         true/false - Enable OSD.
         This enables/disables the other autospeed-osd settings.
-    autospeed-osdtime=10
+    autospeed-osdtime=15
+        Default: 10
         Number - How many seconds the OSD will be shown.
-    autospeed-osdkey=y
+    autospeed-osdkey="ctrl+y"
+        Default: y
         This follows the same standard as mpv's input.conf for keybindgs.
         Key to press to show the OSD.
         Pressing this key will display autospeed information on mpv's OSD.
-    autospeed-estfps=false
+    autospeed-estfps=true
+        Default: false
         true/false - Calculate/change speed if a video has a variable frame rate 
                      at the cost of higher CPU usage.
         If a video has a variable frame rate (fps),
@@ -100,7 +111,8 @@ Valid options (and examples):
         Since the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
         On my computer, mpv goes from ~10% to ~16% CPU usage with this option enabled.
-    autospeed-spause
+    autospeed-spause=true
+        Default: false
         true/false - Pause video while switching display modes.
         Before switching the display mode (refresh rate), pause the video, unpause after
         it is switched. This is to fix an issue with vdpau hardware decoding where

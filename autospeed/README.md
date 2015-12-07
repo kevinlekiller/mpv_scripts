@@ -44,7 +44,7 @@ Valid options (and examples):
         fps and display refresh rate.
     autospeed-display=auto
         If set to "auto", the primary connected monitor will be used with xrandr.
-        Set to your monitors name if you want to tell xrandr to use the specified display
+        If set to your monitors name, tell xrandr to use the specified display
         when changing the refresh rate.
         Find your monitor name using this command: xrandr | grep -Poi '^.+connected'
         It should look something like "HDMI-0".

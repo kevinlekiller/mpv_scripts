@@ -68,7 +68,7 @@ Valid options (and examples):
         true/false - If set to false, the script will ignore a refresh rate if
                      it is interlaced.
         autospeed-interlaced=false Do not use interlaced modes.
-        autospeed-interlaced=true  Use interlaced modes.
+        autospeed-interlaced=true  Use interlaced modes (and non-interlaced modes).
     autospeed-mblacklist=false
         Default: false
         Modes in this list will be ignored. Find modes with xrandr --verbose

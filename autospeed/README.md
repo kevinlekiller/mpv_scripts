@@ -83,17 +83,19 @@ Valid options (and examples):
         Number - How many seconds the OSD will be shown.
         Self-explanatory.
     autospeed-osdkey=y
-        This can be a letter or number.
+        This follows the same standard as mpv's input.conf.
         Key to press to show the OSD.
         Pressing this key will display the autospeed OSD.
     autospeed-estfps=false
-        true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage
-        If a video has a variable fps (frames per second),
-        calculate / set the mpv speed based on the current video fps.
-        This option will do nothing for most videos because, because only few videos have variable fps.
-        Because the speed calulation must be done every time the video fps changes,
+        true/false - Calculate/change speed if a video has a variable frame rate 
+                     at the cost of higher CPU usage.
+        If a video has a variable frame rate (fps),
+        calculate / set the mpv speed based on the current video frame rate.
+        This option will do nothing for most videos because, only few of them have variable fps.
+        For example, most (all?) bluray videos have variable frame rates.
+        Since the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
-        On my CPU, mpv goes from ~10% to ~16% with this option enabled.
+        On my CPU, mpv goes from ~10% to ~16% CPU usage with this option enabled.
     autospeed-spause
         true/false - Pause video while switching display modes.
         Before switching the display mode (refresh rate), pause the video, unpause after

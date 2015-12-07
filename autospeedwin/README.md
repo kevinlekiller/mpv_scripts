@@ -95,7 +95,7 @@ Valid options (and examples):
     Examples:
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-estfps=true,autospeed-minspeed=0.8
-        Setting the options in ~/mpv/mpv.conf:
+        Setting the options in %APPDATA%\mpv\mpv.conf:
             script-opts=autospeed-nircmd=true,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------

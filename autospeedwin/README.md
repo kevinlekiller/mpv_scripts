@@ -12,6 +12,8 @@
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
+* It works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
+
 --------------
 
 #####Basic Description:
@@ -29,50 +31,64 @@ The script can read options from mpv's [--script-opts](http://mpv.io/manual/mast
 
 Valid options (and examples):
 
-    autospeed-nircmd=false      true/false - Use nircmd to change the refresh rate of your monitor.
+    autospeed-nircmd=false
+        true/false - Use nircmd to change the refresh rate of your monitor.
         nircmd will be used to change the refresh rate of your monitor based on options listed below.
-    autospeed-nircmdc="nircmdc" String     - Path to nircmdc executable file.
-                                             If not set, nircmdc will be searched in Windows PATH variable.
-        If yous set this "" or "nircmdc", Windows will look in your PATH for nircmdc,
+    autospeed-nircmdc="nircmdc"
+        String - Path to nircmdc executable file.
+        If not set, nircmdc will be searched in Windows PATH variable.
+        If you set this "" or "nircmdc", Windows will look in your PATH for nircmdc,
         otherwise you can specify a path, for example "c:\programs\nircmdc.exe"
-    autospeed-dwidth=1920       Number     - Display width.
+    autospeed-dwidth=1920
+        Number - Display width.
         This will be sent to nircmd when setting the refresh rate.
-    autospeed-dheight=1080      Number     - Display height.
+    autospeed-dheight=1080
+        Number - Display height.
         This will be sent to nircmd when setting the refresh rate.
-    autospeed-bdepth=32         Number     - Display bit depth.
+    autospeed-bdepth=32
+        Number - Display bit depth. 32 is usually the default.
         This will be sent to nircmd when setting the refresh rate.
-    autospeed-rates="60"        String     - String of refresh rates your monitor supports and you want
-                                             to use, separated by commas. Nircmd seems to prefer rounded
-                                             numbers, 72 instead of 71.92 for example.
-                                             Examples: autospeed-rates="60" | autospeed-rates="50,60,72"
+    autospeed-rates="60"
+        String - String of refresh rates your monitor supports and you want
+            to use, separated by commas. Nircmd seems to prefer rounded
+            numbers, 72 instead of 71.92 for example.
         This is the list of refresh rates you want autospeed to use when it changes your monitor refresh rate.
-    autospeed-exitrate=60       Number     - Which refresh rate to set when exiting mpv. Set to 0 to ignore.
+        Examples: autospeed-rates="60" | autospeed-rates="50,60,72"
+    autospeed-exitrate=60
+        Number - Which refresh rate to set when exiting mpv. Set to 0 to ignore.
         When mpv exits, if you want your monitor to go back to a specific refresh rate.
-    autospeed-minspeed=0.9     Number - Minimum allowable speed to play video at.
-        Do not change speed setting if the calculated speed is lower than this.
+    autospeed-minspeed=0.9
+        Number - Minimum allowable speed to play video at.
+        Does not change mpv's speed setting if the calculated speed is lower than this.
         This is to prevent the video looking like it is in slow motion.
-    autospeed-maxspeed=1.1     Number - Maximum allowable speed to play video at.
-        Do not change speed setting if the calculated speed is higher than this.
+        A value of 0.9 allows playing the video at minimum, 10% slower.
+    autospeed-maxspeed=1.1
+        Number - Maximum allowable speed to play video at.
+        Does not change mpv's speed setting if the calculated speed is higher than this.
         This is to prevent the video looking like it is in fast forward.
-    autospeed-osd=false        true/false - Enable OSD.
+        A value of 1.1 allows playing the video at maximum, 10% faster.
+    autospeed-osd=false
+        true/false - Enable OSD.
         This enables/disables the other autospeed-osd settings.
-    autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
-        Self-explanatory.
-    autospeed-osdkey=y                    - Key to press to show the OSD.
-        Pressing this key will display the autospeed OSD.
-    autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps
-                                            at the cost of higher CPU usage
-        If a video has a variable fps (frames per second),
-        calculate / set the mpv speed based on the current video fps.
-        This option will do nothing for most videos because, because only few videos have variable fps.
-        Because the speed calulation must be done every time the video fps changes,
+    autospeed-osdtime=10
+        Number - How many seconds the OSD will be shown.
+    autospeed-osdkey=y
+        Key to press to show the OSD.
+        This follows the same standard as mpv's input.conf for keybindgs.
+        Pressing this key will display autospeed information on mpv's OSD.
+    autospeed-estfps=false
+        true/false - Calculate/change speed if a video has a variable fps
+                     at the cost of higher CPU usage.
+        If a video has a variable frame rate (fps),
+        calculate / set the mpv speed based on the current video frame rate.
+        This option will do nothing for most videos because, only few of them have variable fps.
+        For example, most (all?) bluray videos have variable frame rates.
+        Since the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
-        On my CPU, mpv goes from ~10% to ~16% with this option enabled.
-    autospeed-spause           true/false - Pause video while switching display modes.
-                                            This can fix issues with vdpau.
+    autospeed-spause
+        true/false - Pause video while switching display modes.
         Before switching the display mode (refresh rate), pause the video, unpause after
-        it is switched. This is to fix an issue with vdpau hardware decoding where
-        the video will become corrupted. This can be used also if you don't want to miss
+        it is switched. This can be used if you don't want to miss
         some of the video while your display is blank (my display is blank for ~5 seconds
         while switching modes).
     

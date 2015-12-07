@@ -4,7 +4,7 @@
     Valid --script-opts are (they are all optional):
     autospeed-xrandr=false     true/false - Use xrandr to change display refresh rate?.
     autospeed-speed=true       true/false - Adjust speed of the video?
-    autospeed-display=HDMI1               - Use specified xrandr display, find with xrandr -q
+    autospeed-display=HDMI1               - Use specified xrandr display, find with xrandr -q, if set to "auto", uses the primary monitor.
     autospeed-exitmode=0x48               - Changes the monitor mode (refresh rate) when exiting mpv.
                                             autospeed-exitmode=false Don't change the mode when exiting. If autospeed-exitmode is not set, this is the default.
                                             autospeed-exitmode=auto Change the mode to the mode used when mpv started.
@@ -287,16 +287,23 @@ function getXrandrModes()
         foundRes = false,
         count = 0,
         resolution,
-        disp = string.gsub(_global.options["display"], "%-", "%%-")
     }
+    if (_global.options["display"] == "auto") then
+        vars.disp = "^%S+%sconnected%sprimary"
+    else
+        vars.disp = "^" .. string.gsub(_global.options["display"], "%-", "%%-")
+    end
     _global.temp["maxclock"] = 0
     for line in vars.handle:lines() do
-        if (vars.foundDisp == false and string.match(line, "^" .. vars.disp) == _global.options["display"]) then -- Check if the display name (ie HDMI1) matches the one in the config.
+        if (vars.foundDisp == false and string.match(line, vars.disp) ~= nil) then -- Check if the display name (ie HDMI1) matches the one in the config.
             if (string.find(line, "disconnected") ~= nil) then
                 break -- Wrong display name was given.
             else
-                local res = string.match(line, "^" .. vars.disp .. "%D+([%dx]+)") -- Find current monitor resolution.
+                local res = string.match(line, vars.disp .. "%D+([%dx]+)") -- Find current monitor resolution.
                 if (res ~= nil and res ~= "") then
+                    if (_global.options["display"] == "auto") then
+                        _global.options["display"] = string.match(line, "^%S+")
+                    end
                     vars.resolution = res
                     vars.foundDisp = true
                 else
@@ -375,10 +382,12 @@ function start()
     mp.add_key_binding(_global.options["osdkey"], mp.get_script_name(), osdEcho, {repeatable=true})
     if (_global.options["xrandr"] == true and _global.options.exitmode ~= "false") then
         function revertDrr()
-            if (_global.options["exitmode"] == "auto" and _global.temp["origmode"] ~= nil) then
-                os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.temp["origmode"] .. " &")
-            else
-                os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.options["exitmode"] .. " &")
+            if (_global.options["display"] ~= "auto") then
+                if (_global.options["exitmode"] == "auto" and _global.temp["origmode"] ~= nil) then
+                    os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.temp["origmode"] .. " &")
+                else
+                    os.execute("xrandr --output " .. _global.options["display"] .. " --mode " .. _global.options["exitmode"] .. " &")
+                end
             end
         end
         mp.register_event("shutdown", revertDrr)

@@ -102,11 +102,11 @@ Valid options (and examples):
 
 #####Installation:
 
-Put the file inside the mpv/scripts folder, see the [mpv man page](https://github.com/mpv-player/mpv/blob/master/DOCS/man/mpv.rst#files) for the correct path.
+Put the file inside the mpv\scripts folder, see the [mpv man page](https://github.com/mpv-player/mpv/blob/master/DOCS/man/mpv.rst#files) for the correct path, should be `%APPDATA%\mpv\scripts\`.
 
 
 Direct download link:  
-[autospeed.lua](https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeedwin/autospeedwin.lua)  
+[autospeedwin.lua](https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/autospeedwin/autospeedwin.lua)  
 
 --------------
 

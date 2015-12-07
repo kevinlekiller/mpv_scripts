@@ -83,11 +83,10 @@ Valid options (and examples):
         This enables/disables the other autospeed-osd settings.
     autospeed-osdtime=10
         Number - How many seconds the OSD will be shown.
-        Self-explanatory.
     autospeed-osdkey=y
-        This follows the same standard as mpv's input.conf.
+        This follows the same standard as mpv's input.conf for keybindgs.
         Key to press to show the OSD.
-        Pressing this key will display autospeed infortmation on mpv's OSD.
+        Pressing this key will display autospeed information on mpv's OSD.
     autospeed-estfps=false
         true/false - Calculate/change speed if a video has a variable frame rate 
                      at the cost of higher CPU usage.

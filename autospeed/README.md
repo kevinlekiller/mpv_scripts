@@ -137,15 +137,17 @@ Fetches your monitor refresh rate and video fps from mpv.
 
 If you have xrandr enabled in the config file:
 
-The supported modes for your monitor and resolution will be  
-parsed using your display name (set using the --script-opts mentioned above), your monitor will be over or under clocked to the most appropriate refresh rate based on  
-the video speed thresholds (set using the --script-opts mentioned above).
+The supported modes for your monitor and resolution will be parsed using  
+your display name (`autospeed-display`), your monitor's  
+refresh rate will be changed to the most appropriate one based on  
+the video speed thresholds (`autospeed-minspeed` and `autospeed-maxspeed`).
 
 The speed is then calculated based on the video fps / display refresh rate.
 
-If the speed is within range of the settings specified in the config file, the mpv speed property is set.
+If the speed is within range of the thresholds (`autospeed-minspeed` and `autospeed-maxspeed`),  
+the mpv speed property is set.
 
-When mpv exits, the mode will be set to a user specified mode (set using the --script-opts mentioned above)
+When mpv exits, the mode will be set to a user specified mode (`autospeed-exitmode`).
 
 --------------
 

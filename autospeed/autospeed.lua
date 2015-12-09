@@ -20,7 +20,7 @@
     autospeed-osdtime=10       Number     - How many seconds the OSD will be shown.
     autospeed-osdkey=y                    - Key to press to show the OSD.
     autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage (most videos have a fixed fps).
-    autospeed-spause           true/false - Pause video while switching display modes. This can fix issues with vdpau.
+    autospeed-spause           true/false - Pause video while switching display modes.
 
     Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
 --]]

@@ -115,8 +115,7 @@ Valid options (and examples):
         Default: false
         true/false - Pause video while switching display modes.
         Before switching the display mode (refresh rate), pause the video, unpause after
-        it is switched. This is to fix an issue with vdpau hardware decoding where
-        the video will become corrupted. This can be used also if you don't want to miss
+        it is switched. This can be used if you don't want to miss
         some of the video while your display is blank (my display is blank for ~5 seconds
         while switching modes).
     

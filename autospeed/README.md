@@ -111,9 +111,15 @@ Valid options (and examples):
         Since the speed calulation must be done every time the video fps changes,
         this increases CPU load slightly.
         On my computer, mpv goes from ~10% to ~16% CPU usage with this option enabled.
-    autospeed-spause=true
+    autospeed-spause=4
         Default: false
         true/false - Pause video while switching display modes.
+                     true:  This will pause the video before and after switching the mode.
+                     false: Disables this option.
+        Number     - Amount of seconds to sleep.
+                     If bigger than 0: After switching the mode, we will wait this amount
+                     of seconds before unpausing the video.
+                     If set to 0:      It disables the option, like false.
         Before switching the display mode (refresh rate), pause the video, unpause after
         it is switched. This can be used if you don't want to miss
         some of the video while your display is blank (my display is blank for ~5 seconds
@@ -123,7 +129,7 @@ Valid options (and examples):
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
         Setting the options in ~/.config/mpv/mpv.conf :
-            script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-display=auto,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
+            script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-display=auto,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=4
 
 --------------
 

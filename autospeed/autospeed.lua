@@ -21,6 +21,7 @@
     autospeed-osdkey=y                    - Key to press to show the OSD.
     autospeed-estfps=false     true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage (most videos have a fixed fps).
     autospeed-spause           true/false - Pause video while switching display modes.
+                               Number     - If you set this a number, it will pause for that amount of seconds.
 
     Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
 --]]
@@ -86,14 +87,23 @@ function getOptions()
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if (key == "xrandr" or key == "osd" or key == "estfps" or key == "spause" or key == "interlaced" or key == "speed") then
+            if (key == "xrandr" or key == "osd" or key == "estfps" or key == "interlaced" or key == "speed") then
                 if (opt == "true") then
                     _global.options[key] = true
                 end
             elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime") then
-                local test = tonumber(opt)
-                if (test ~= nil) then
-                    _global.options[key] = test
+                opt = tonumber(opt)
+                if (opt ~= nil) then
+                    _global.options[key] = opt
+                end
+            elseif (key == "spause") then
+                if (opt == "true") then
+                    _global.options[key] = 0
+                else
+                    opt = tonumber(opt)
+                    if (opt ~= nil) then
+                        _global.options[key] = opt
+                    end
                 end
             else
                 _global.options[key] = opt
@@ -254,17 +264,11 @@ function setXrandrRate(mode)
         vars.time_pos = mp.get_property("time-pos")
         mp.set_property("vid", "no")
     end
-    _global.utils.subprocess({
-        ["cancellable"] = false,
-        ["args"] = {
-            [1] = "xrandr",
-            [2] = "--output",
-            [3] = _global.options["display"],
-            [4] = "--mode",
-            [5] = mode,
-        }
-    })
+    _global.utils.subprocess({["cancellable"] = false, ["args"] = {[1] = "xrandr", [2] = "--output", [3] = _global.options["display"], [4] = "--mode", [5] = mode,}})
     if (_global.options["spause"]) then
+        if (tonumber(_global.options["spause"]) ~= nil and _global.options["spause"] > 0) then
+            _global.utils.subprocess({["cancellable"] = false, ["args"] = {[1] = "sleep", [2] = _global.options["spause"]}})
+        end
         mp.set_property("pause", "no")
     end
     if (vars.vdpau) then
@@ -273,13 +277,7 @@ function setXrandrRate(mode)
             mp.commandv("seek", vars.time_pos, "absolute", "keyframes")
         end
     end
-    _global.utils.subprocess({
-        ["cancellable"] = false,
-        ["args"] = {
-            [1] = "sleep",
-            [2] = "0.5",
-        }
-    })
+    _global.utils.subprocess({["cancellable"] = false, ["args"] = {[1] = "sleep", [2] = "0.5"}})
     _global.temp["drr"] = mp.get_property_native("display-fps")
     _global.modeCache[_global.temp["drr"]] = mode
     _global.lastDrr = _global.temp["drr"]

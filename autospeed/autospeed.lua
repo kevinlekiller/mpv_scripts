@@ -245,9 +245,14 @@ function findRefreshRate()
 end
 
 function setXrandrRate(mode)
-    local paused = mp.get_property("pause")
-    if (_global.options["spause"] == true and paused ~= "yes") then
+    local vars = {vid = nil, time_pos = nil, vdpau = (mp.get_property("options/vo") == "vdpau" or mp.get_property("options/hwdec") == "vdpau")}
+    if (_global.options["spause"]) then
         mp.set_property("pause", "yes")
+    end
+    if (vars.vdpau) then
+        vars.vid = mp.get_property("vid")
+        vars.time_pos = mp.get_property("time-pos")
+        mp.set_property("vid", "no")
     end
     _global.utils.subprocess({
         ["cancellable"] = false,
@@ -259,8 +264,14 @@ function setXrandrRate(mode)
             [5] = mode,
         }
     })
-    if (_global.options["spause"] == true and paused ~= "yes") then
+    if (_global.options["spause"]) then
         mp.set_property("pause", "no")
+    end
+    if (vars.vdpau) then
+        mp.set_property("vid", vars.vid)
+        if (vars.time_pos ~= nil) then
+            mp.commandv("seek", vars.time_pos, "absolute", "keyframes")
+        end
     end
     _global.utils.subprocess({
         ["cancellable"] = false,

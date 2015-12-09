@@ -116,7 +116,7 @@ Valid options (and examples):
         true/false - Pause video while switching display modes.
                      true:  This will pause the video before and after switching the mode.
                      false: Disables this option.
-        Number     - Amount of seconds to sleep.
+        Number     - This enables the pause like true and sleeps for this amount of seconds.
                      If bigger than 0: After switching the mode, we will wait this amount
                      of seconds before unpausing the video.
                      If set to 0:      It disables the option, like false.

@@ -8,3 +8,5 @@ Various scripts for MPV.
 [autoscaling](https://github.com/kevinlekiller/mpv_scripts/tree/master/autoscaling/): Disable video scaling if video is slightly smaller than window size. (*nix / Windows)
 
 [maximize](https://github.com/kevinlekiller/mpv_scripts/tree/master/maximize/): Keeps the mpv window maximized when not in fullscreen. (Windows)
+
+[powermizer](https://github.com/kevinlekiller/mpv_scripts/tree/master/powermizer/): Sets max performance on Nvidia GPU's when starting mpv, sets back to adaptive when exiting. (*nix)

@@ -29,7 +29,7 @@
     https://www.gnu.org/licenses/gpl-2.0.html
 --]]
 
--- It returns the status on whichever lua version mpv is compiled with.
+-- It returns the status on whichever lua version mpv is compiled with currently (december 2015).
 -- On lua 5.3 it returns bool or nil, maybe add some check in the future for this.
 if (os.execute("which nvidia-settingsa &> /dev/null") == "0") then
     local gpu = mp.get_opt("powermizer-gpu")

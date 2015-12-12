@@ -255,6 +255,9 @@ function findRefreshRate()
 end
 
 function setXrandrRate(mode)
+    if (mode == _global.temp["currentmode"]) then
+        return
+    end
     local vars = {vid = nil, time_pos = nil, vdpau = (mp.get_property("options/vo") == "vdpau" or mp.get_property("options/hwdec") == "vdpau")}
     if (_global.options["spause"]) then
         mp.set_property("pause", "yes")
@@ -281,6 +284,7 @@ function setXrandrRate(mode)
     _global.temp["drr"] = mp.get_property_native("display-fps")
     _global.modeCache[_global.temp["drr"]] = mode
     _global.lastDrr = _global.temp["drr"]
+    _global.temp["currentmode"] = mode
 end
 
 function getXrandrModes()
@@ -330,6 +334,7 @@ function getXrandrModes()
                     if (_global.temp["origmode"] == nil) then
                         if (string.find(line, "%*current") ~= nil) then
                             _global.temp["origmode"] = vars.mode
+                            _global.temp["currentmode"] = vars.mode
                         end
                     end
                     vars.interlaced = false

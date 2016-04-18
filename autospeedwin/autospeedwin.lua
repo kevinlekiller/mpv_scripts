@@ -3,6 +3,7 @@
     
     Valid --script-opts are (they are all optional):
     autospeed-nircmd=false      true/false - Use nircmd to change the refresh rate of your monitor.
+    autospeed-speed=true        true/false - Adjust speed of the video?.
     autospeed-nircmdc="nircmdc" String     - Path to nircmdc executable file. If not set, nircmdc will be searched in Windows PATH variable.
     autospeed-dwidth=1920       Number     - Display width.
     autospeed-dheight=1080      Number     - Display height.
@@ -66,6 +67,7 @@ end
 function getOptions()
     _global.options = {
         ["nircmd"]    = false,
+        ["speed"]     = true,
         ["nircmdc"]   = "nircmdc",
         ["dwidth"]    = 1920,
         ["dheight"]   = 1080,
@@ -83,7 +85,7 @@ function getOptions()
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if ((key == "nircmd" or key == "osd" or key == "estfps" or key == "spause") and opt == "true") then
+            if ((key == "nircmd" or key == "speed" or key == "osd" or key == "estfps" or key == "spause") and opt == "true") then
                 _global.options[key] = true
             elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime" or key == "dwidth" or key == "dheight" or key == "bdepth" or key == "exitrate") then
                 local test = tonumber(opt)
@@ -105,7 +107,7 @@ function main(name, fps)
     _global.temp["fps"] = fps
     findRefreshRate()
     determineSpeed()
-    if (_global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
+    if (_global.options["speed"] == true and _global.temp["speed"] >= _global.options["minspeed"] and _global.temp["speed"] <= _global.options["maxspeed"]) then
         mp.set_property_number("speed", _global.temp["speed"])
     else
         _global.temp["speed"] = _global.confSpeed

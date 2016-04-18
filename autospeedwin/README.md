@@ -34,6 +34,11 @@ Valid options (and examples):
     autospeed-nircmd=false
         true/false - Use nircmd to change the refresh rate of your monitor.
         nircmd will be used to change the refresh rate of your monitor based on options listed below.
+    autospeed-speed=true
+        Default: true
+        true/false - Adjust speed of the video?
+        If set to true, the mpv speed setting will be changed based on the video
+        fps and display refresh rate.
     autospeed-nircmdc="nircmdc"
         String - Path to nircmdc executable file.
         If not set, nircmdc will be searched in Windows PATH variable.
@@ -96,7 +101,7 @@ Valid options (and examples):
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-estfps=true,autospeed-minspeed=0.8
         Setting the options in %APPDATA%\mpv\mpv.conf:
-            script-opts=autospeed-nircmd=true,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
+            script-opts=autospeed-nircmd=true,autospeed-speed=true,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=true
 
 --------------
 

@@ -1,10 +1,8 @@
 --[[
     Disable video scaling if video is slightly smaller than window size.
 
-    For this script to function properly, you need to either be fullscreen or have the "no-border" option
-    in addition to disabling any options altering the size of the window when not in fullscreen (window-scale must be 1 for example),
-    otherwise the calculations may be off. If you do not have the "no-border" option enabled, the script
-    will still function when you enter fullscreen mode, it will be disabled when outside of fullscreen.
+    The "window-scale" will be set to 1 and "border" set to "no" if the video is within range,
+    this is to simplify how the script functions.
 
     Edit the script settings at line ~35.
 
@@ -41,16 +39,13 @@ local settings = {
     -- For example, the video is 1860x1020, window size is 1920x1080, 1920*0.93=1786, 1080*0.93=1004,
     -- the video is larger than 1786x1004 so scaling is turned off.
     deviation = 0.93,
-    -- Set to true if you want to enable scaling if video width is smaller than (monitor width * deviation)
-    -- For example, if you set to false, a video with 1440x1080 (4x3 aspect ratio) on a 1920x1080 monitor will have scaling turned off.
-    min_width = false,
     osd = {
         -- Enable OSD?
         enabled = false,
         -- How much time in seconds will the OSD message be on screen.
         time = 5,
         -- Keyboard key to print OSD message.
-        key = "c"
+        key = ";"
     },
     -- Add debug to OSD messages?
     debug = false
@@ -65,26 +60,17 @@ local global = {
         start = mp.get_property_osd("osd-ass-cc/0"),
         stop = mp.get_property_osd("osd-ass-cc/1")
     },
-    debug = "",
-    require_printed = false,
-    fullscreen = "no"
+    debug = ""
 }
 
 function main()
-	mp.set_property("window-scale", 1)
-    global.fullscreen = mp.get_property("fullscreen")
-    if (global.fullscreen == "no" and mp.get_property("border") == "yes") then
-        global.scale = mp.get_property("video-unscaled")
-        global.debug = "Error: This script requires '--fullscreen' or '--no-border' to function correctly."
-        if (global.require_printed == false) then
-            print(global.debug)
-            global.require_printed = true
-        end
-        return
-    end
     global.debug = ""
     global.scale = check_scaling()
     if (global.scale ~= nil) then
+        if (global.scale == "yes") then
+            mp.set_property("border", "no")
+            mp.set_property("window-scale", 1)
+        end
         mp.set_property("video-unscaled", global.scale)
     end
 end
@@ -99,13 +85,11 @@ function osd()
     end
 end
 
-function check_scaling()
-	local windowScale = mp.get_property("window-scale")
-	if (windowScale == nil or tonumber(windowScale) ~= 1) then
-		global.debug = "Error getting window-scale or window-scale is not 1, got (" .. tostring(windowScale) .. ")"
-        return nil
-	end
+if (settings.osd.enabled == true) then
+    mp.add_key_binding(settings.osd.key, "auto-scaling_osd", osd, {repeatable=true})
+end
 
+function check_scaling()
     -- Get video dimensions.
     local video = {
         width = mp.get_property("video-out-params/dw"),
@@ -141,6 +125,7 @@ function check_scaling()
         global.debug = "Video (" .. video.width .. "x" .. video.height .. ") is "
     end
 
+    -- Video is bigger than monitor.
     if (video.width > window.width or video.height > window.height) then
         if (settings.debug == true) then
             global.debug = (
@@ -151,43 +136,41 @@ function check_scaling()
         return "no"
     end
 
-    if (settings.min_width == true and video.width < min.width) then
+    -- Video width is within acceptable range.
+    if (video.width >= min.width) then
         if (settings.debug == true) then
             global.debug = (
-                global.debug .. "less than threshold value of (" ..
-                min.width .. "x" .. min_height .. "), enable scaling."
+                global.debug .. "within acceptable width range of (" ..
+                min.width .. " - " .. window.width .. "), disable scaling."
             )
         end
-        return "no" 
+        return "yes"
     end
 
-    -- 
-    if (video.height < min.height) then
+    -- Video height is within acceptable range.
+    if (video.height >= min.height) then
         if (settings.debug == true) then
             global.debug = (
-                global.debug .. "less than threshold value of (" ..
-                min.width .. "x" .. min.height .. "), enable scaling."
+                global.debug .. "within acceptable height range of (" ..
+                min.height .. " - " .. window.height .. "), disable scaling."
             )
         end
-        return "no"
+        return "yes"
     end
 
-    -- Video is larger than threshold values and smaller than window size, disable scaling.
+    -- Video height and width are under acceptable range. Enable scaling.
     if (settings.debug == true) then
         global.debug = (
             global.debug ..
-            "within acceptable range of thresholds (" .. min.width ..
+            "under acceptable range of thresholds (" .. min.width ..
             "x" .. min.height .. ") and window size (" ..
-            window.width .. "x" .. window.height .. "), disable scaling."
+            window.width .. "x" .. window.height .. "), enable scaling."
         )
     end
-    return "yes"
+    return "no"
 end
 
 mp.register_event("file-loaded", main)
 mp.register_event("video-reconfig", main)
 mp.observe_property("window-scale", "native", main)
 mp.observe_property("fullscreen", "native", main)
-if (settings.osd.enabled == true) then
-    mp.add_key_binding(settings.osd.key, mp.get_script_name(), osd, {repeatable=true})
-end

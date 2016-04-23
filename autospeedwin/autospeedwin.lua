@@ -18,12 +18,13 @@
     autospeed-osdtime=10        Number     - How many seconds the OSD will be shown.
     autospeed-osdkey=y                     - Key to press to show the OSD.
     autospeed-estfps=false      true/false - Calculate/change speed if a video has a variable fps at the cost of higher CPU usage (most videos have a fixed fps).
-    autospeed-spause            true/false - Pause video while switching display refresh rates.
+    autospeed-spause            true/false - Pause video while switching display modes.
+                                Number     - If you set this a number, it will pause for that amount of seconds.
 
     Example: mpv file.mkv --script-opts=autospeed-nircmd=true,autospeed-minspeed=0.8
 --]]
 --[[
-    Copyright (C) 2015  kevinlekiller
+    Copyright (C) 2016  kevinlekiller
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -80,14 +81,14 @@ function getOptions()
         ["osdtime"]   = 10,
         ["osdkey"]    = "y",
         ["estfps"]    = false,
-        ["spause"]    = false,
+        ["spause"]    = 0,
     }
     for key, value in pairs(_global.options) do
         local opt = mp.get_opt("autospeed-" .. key)
         if (opt ~= nil) then
-            if ((key == "nircmd" or key == "speed" or key == "osd" or key == "estfps" or key == "spause") and opt == "true") then
+            if ((key == "nircmd" or key == "speed" or key == "osd" or key == "estfps") and opt == "true") then
                 _global.options[key] = true
-            elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime" or key == "dwidth" or key == "dheight" or key == "bdepth" or key == "exitrate") then
+            elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime" or key == "dwidth" or key == "dheight" or key == "bdepth" or key == "exitrate" or key == "spause") then
                 local test = tonumber(opt)
                 if (test ~= nil) then
                     _global.options[key] = test
@@ -244,7 +245,7 @@ end
 
 function setRate(rate)
     local paused = mp.get_property("pause")
-    if (_global.options["spause"] == true and paused ~= "yes") then
+    if (_global.options["spause"] > 0 and paused ~= "yes") then
         mp.set_property("pause", "yes")
     end
     _global.utils.subprocess({
@@ -258,20 +259,11 @@ function setRate(rate)
             [6] = rate
         }
     })
-    if (_global.options["spause"] == true and paused ~= "yes") then
+    if (_global.options["spause"] > 0 and paused ~= "yes") then
+		os.execute("ping -n " .. _global.options["spause"] .. " localhost > NUL")
         mp.set_property("pause", "no")
     end
-    _global.utils.subprocess({
-        ["cancellable"] = false,
-        ["args"] = {
-            [1] = "ping",
-            [2] = "-n",
-            [3] = "2",
-            [4] = "localhost",
-            [5] = ">",
-            [6] = "NUL",
-        }
-    })
+	os.execute("ping -n 2 localhost > NUL")
     _global.temp["drr"] = mp.get_property_native("display-fps")
     _global.rateCache[_global.temp["drr"]] = rate
     _global.lastDrr = _global.temp["drr"]

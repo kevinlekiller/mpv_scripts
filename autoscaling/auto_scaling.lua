@@ -1,6 +1,8 @@
 --[[
     Disable video scaling if video is slightly smaller than window size.
 
+    For example, your monitor is 1920x1080, the video is 1920x816 (2.35:1 aspect ratio), scaling is disabled.
+
     The "window-scale" will be set to 1 and "border" set to "no" if the video is within range,
     this is to simplify how the script functions.
 
@@ -31,9 +33,9 @@
 ------------------------------------------- Start of user settings ----------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------
 local settings = {
-	-- Width of your monitor's resolution in pixels.
-	width = 1920,
-	-- Height of your monitor's resolution in pixels.
+    -- Width of your monitor's resolution in pixels.
+    width = 1920,
+    -- Height of your monitor's resolution in pixels.
 	height = 1080,
     -- How much smaller can a video be to the window size before enabling scaling?
     -- For example, the video is 1860x1020, window size is 1920x1080, 1920*0.93=1786, 1080*0.93=1004,

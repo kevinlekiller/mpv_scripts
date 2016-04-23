@@ -2,16 +2,16 @@
     Disable video scaling if video is slightly smaller than window size.
 
     For this script to function properly, you need to either be fullscreen or have the "no-border" option
-    in addition to disabling any options altering the size of the window when not in fullscreen,
+    in addition to disabling any options altering the size of the window when not in fullscreen (window-scale must be 1 for example),
     otherwise the calculations may be off. If you do not have the "no-border" option enabled, the script
     will still function when you enter fullscreen mode, it will be disabled when outside of fullscreen.
 
-    Edit settings @ line ~35.
+    Edit the script settings at line ~35.
 
     https://github.com/kevinlekiller/mpv_scripts
 --]]
 --[[
-    Copyright (C) 2015  kevinlekiller
+    Copyright (C) 2016  kevinlekiller
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -33,12 +33,16 @@
 ------------------------------------------- Start of user settings ----------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------
 local settings = {
+	-- Width of your monitor's resolution in pixels.
+	width = 1920,
+	-- Height of your monitor's resolution in pixels.
+	height = 1080,
     -- How much smaller can a video be to the window size before enabling scaling?
     -- For example, the video is 1860x1020, window size is 1920x1080, 1920*0.93=1786, 1080*0.93=1004,
     -- the video is larger than 1786x1004 so scaling is turned off.
     deviation = 0.93,
-    -- Set to true if you want to enable scaling if video width is smaller than (window.width * settings.deviation)
-    -- For example, if you set to false, a video with 1440x1080 (4x3 aspect ratio) on a 1080p monitor will have scaling turned off.
+    -- Set to true if you want to enable scaling if video width is smaller than (monitor width * deviation)
+    -- For example, if you set to false, a video with 1440x1080 (4x3 aspect ratio) on a 1920x1080 monitor will have scaling turned off.
     min_width = false,
     osd = {
         -- Enable OSD?
@@ -67,6 +71,7 @@ local global = {
 }
 
 function main()
+	mp.set_property("window-scale", 1)
     global.fullscreen = mp.get_property("fullscreen")
     if (global.fullscreen == "no" and mp.get_property("border") == "yes") then
         global.scale = mp.get_property("video-unscaled")
@@ -95,36 +100,36 @@ function osd()
 end
 
 function check_scaling()
+	local windowScale = mp.get_property("window-scale")
+	if (windowScale == nil or tonumber(windowScale) ~= 1) then
+		global.debug = "Error getting window-scale or window-scale is not 1, got (" .. tostring(windowScale) .. ")"
+        return nil
+	end
+
     -- Get video dimensions.
     local video = {
-        width = mp.get_property("video-params/dw"),
-        height = mp.get_property("video-params/dh")
+        width = mp.get_property("video-out-params/dw"),
+        height = mp.get_property("video-out-params/dh")
     }
 
     -- Get window size.
     local window = {
-        width = mp.get_property("video-out-params/dw"),
-        height = mp.get_property("video-out-params/dh"),
+        width = tonumber(settings.width),
+        height = tonumber(settings.height),
     }
 
     local error = "nil property unavailable"
-    if (video.width == error or window.width == error) then
-        global.debug = "Unable to get video or window dimensions."
+    if (video.width == error or video.height == error) then
+        global.debug = "Unable to get video dimensions."
         return nil
     end
 
-    window.width = tonumber(window.width)
-    window.height = tonumber(window.height)
     video.width = tonumber(video.width)
     video.height = tonumber(video.height)
     if (window.width == nil or video.width == nil) then
         global.debug = "Unable to get video or window dimensions."
         return nil
     end
-    
-    local scale = tonumber(mp.get_property("window-scale"))
-    window.width = (window.width * scale)
-    window.height = (window.height * scale)
 
     -- Minimum acceptable values.
     local min = {

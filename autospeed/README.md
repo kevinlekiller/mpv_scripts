@@ -12,15 +12,16 @@
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
-* It works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
+* It (adjusting the monitor refresh rate) works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
 If your videos stutter with `--video-sync=display-resample` and autospeed, this is possibly due to a vsync timing issue, which can be caused the compositor you use. I've switched my compositor to [compton](https://github.com/chjj/compton) with `--vsync opengl-swc --backend glx` options which solved the issue.  
-You can use `--video-sync=audio` which still produces acceptable results.
+You can use `--video-sync=audio` which still produces acceptable results.  
+You should not use `--video-sync=display-resample` and `autospeed-speed=true` at the same time.
 
 --------------
 
 #####Basic Description:
 
-Optionally changes the monitor refresh rate to be closer to the video fps, then sets
+Changes the monitor refresh rate to be closer to the video fps, then sets
 the speed of the video to be closer to the monitor refresh rate.
 
 Lower resource usage than using interpolation.
@@ -43,6 +44,7 @@ Valid options (and examples):
         true/false - Adjust speed of the video?
         If set to true, the mpv speed setting will be changed based on the video
         fps and display refresh rate.
+        Do not use this with mpv's --video-sync=display-resample
     autospeed-display=auto
         Default: auto
         If set to "auto", the primary connected monitor will be used with xrandr.

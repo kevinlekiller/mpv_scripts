@@ -12,7 +12,8 @@
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
-* It works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
+* It (adjusting the monitor refresh rate works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
+  You should not use --video-sync=display-resample and autospeed-speed=true at the same time.
 
 --------------
 
@@ -39,6 +40,7 @@ Valid options (and examples):
         true/false - Adjust speed of the video?
         If set to true, the mpv speed setting will be changed based on the video
         fps and display refresh rate.
+        Do not use this with mpv's --video-sync=display-resample
     autospeed-nircmdc="nircmdc"
         String - Path to nircmdc executable file.
         If not set, nircmdc will be searched in Windows PATH variable.

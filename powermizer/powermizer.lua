@@ -28,7 +28,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     https://www.gnu.org/licenses/gpl-2.0.html
 --]]
-local test = os.execute("which nvidia-settings &> /dev/null")
+local test = os.execute("which nvidia-settings > /dev/null")
 if (test == 0 or test == true) then
     local gpu = mp.get_opt("powermizer-gpu")
     if (gpu ~= nil) then
@@ -52,7 +52,7 @@ if (test == 0 or test == true) then
         -- If it's nil it's because of the "shutdown" event.
         if (paused == true or paused == nil) then
             os.execute("nvidia-settings -a " .. gpu .. "/GPUPowerMizerMode=0 > /dev/null")
-        elseif (paused == false)
+        else
             os.execute("nvidia-settings -a " .. gpu .. "/GPUPowerMizerMode=1 > /dev/null")
         end
     end

@@ -2,9 +2,9 @@
 
 mpv script for setting the "PowerMizer" setting on Nvidia GPU's with the proprietary driver on *nix operating systems.
 
-It sets "PowerMizer" to "Prefer Maximum Performance" when mpv starts.
+It sets "PowerMizer" to "Prefer Maximum Performance" when mpv is playing.
 
-It sets "PowerMizer" to "Adaptive" when mpv exits.
+It sets "PowerMizer" to "Adaptive" when mpv is idle or exits.
 
 It will try to automatically detect your GPU.
 

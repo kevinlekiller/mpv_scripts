@@ -51,9 +51,9 @@ if (test == 0 or test == true) then
     function switch(name, paused)
         -- If it's nil it's because of the "shutdown" event.
         if (paused == true or paused == nil) then
-            os.execute("nvidia-settings -q -a " .. gpu .. "/GPUPowerMizerMode=0 > /dev/null")
+            os.execute("nvidia-settings -a " .. gpu .. "/GPUPowerMizerMode=0 > /dev/null")
         else
-            os.execute("nvidia-settings -q -a " .. gpu .. "/GPUPowerMizerMode=1 > /dev/null")
+            os.execute("nvidia-settings -a " .. gpu .. "/GPUPowerMizerMode=1 > /dev/null")
         end
     end
 

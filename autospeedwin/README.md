@@ -1,6 +1,6 @@
 # autospeedwin
 
-######Lua script for mpv to adjust monitor refresh rate and video speed for almost 1:1 playback.
+######Lua script for [mpv](https://mpv.io/) to adjust monitor refresh rate and video speed for almost 1:1 playback.
 
 --------------
 

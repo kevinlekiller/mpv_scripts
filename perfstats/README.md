@@ -1,0 +1,35 @@
+# perfstats
+
+[mpv](https://mpv.io/) script for displaying statistics on dropped frames and video output performance.
+
+Default keybinding is ` (the key under Escape on US keyboards).
+
+Frames:
+    Dropped:    https://mpv.io/manual/master/#command-interface-drop-frame-count
+    VO Dropped: https://mpv.io/manual/master/#command-interface-vo-drop-frame-count
+    Mistimed:   https://mpv.io/manual/master/#command-interface-mistimed-frame-count
+    VO Delayed:    https://mpv.io/manual/master/#command-interface-vo-delayed-frame-count
+
+Video output performance:
+    upload:  https://mpv.io/manual/master/#command-interface-upload
+    render:  https://mpv.io/manual/master/#command-interface-render
+    present: https://mpv.io/manual/master/#command-interface-present
+    Total:   Combined amount of time of the above 3 (this should stay lower than
+             your display frame time, if it goes higher, you will want to tweak
+             mpv settings).
+
+    last:    How much time it took for the last frame; https://mpv.io/manual/master/#command-interface-last
+    average: How much time it took for the last few frames; https://mpv.io/manual/master/#command-interface-avg
+             Note: Wait 5 to 10 seconds at the start of a video for the average to settle.
+
+Maximum display frame time:
+    This is how much time your computer monitor spends displaying a single frame.
+
+Note: All time measurements are in microseconds.
+
+Download link for the script: https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/perfstats/perfstats.lua
+
+----
+#License:
+
+https://github.com/kevinlekiller/mpv_scripts/blob/master/LICENSE

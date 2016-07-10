@@ -1,5 +1,5 @@
 # mpv_scripts
-Various scripts for MPV.
+Various scripts for [mpv](https://mpv.io/).
 
 [autospeed](https://github.com/kevinlekiller/mpv_scripts/tree/master/autospeed/): Tries to match up monitor / video speeds for smoother playback. (*nix)
 
@@ -9,4 +9,11 @@ Various scripts for MPV.
 
 [maximize](https://github.com/kevinlekiller/mpv_scripts/tree/master/maximize/): Keeps the mpv window maximized when not in fullscreen. (Windows)
 
+[perfstats](https://github.com/kevinlekiller/mpv_scripts/tree/master/perfstats/): Displays statistics on dropped frames and video output performance.
+
 [powermizer](https://github.com/kevinlekiller/mpv_scripts/tree/master/powermizer/): Sets max performance on Nvidia GPU's when starting mpv, sets back to adaptive when exiting. (*nix)
+
+----
+#License:
+
+https://github.com/kevinlekiller/mpv_scripts/blob/master/LICENSE

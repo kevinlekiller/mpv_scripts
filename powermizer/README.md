@@ -1,6 +1,6 @@
 # powermizer
 
-mpv script for setting the "PowerMizer" setting on Nvidia GPU's with the proprietary driver on *nix operating systems.
+[mpv](https://mpv.io/) script for setting the "PowerMizer" setting on Nvidia GPU's with the proprietary driver on *nix operating systems.
 
 It sets "PowerMizer" to "Prefer Maximum Performance" when mpv is playing.
 
@@ -13,3 +13,8 @@ You can override this by passing the mpv command: `--script-opts=powermizer-gpu=
 You can find your GPU with this command: `nvidia-settings -q gpus`
 
 Download link for the script: https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/powermizer/powermizer.lua
+
+----
+#License:
+
+https://github.com/kevinlekiller/mpv_scripts/blob/master/LICENSE

@@ -1,5 +1,5 @@
 --[[
-    Displays statistics on dropped frames and video output performance.
+    mpv script for displaying statistics on dropped frames and video output performance.
     
     Default keybinding is ` (the key under Escape on US keyboards).
     
@@ -7,7 +7,7 @@
         Dropped:    https://mpv.io/manual/master/#command-interface-drop-frame-count
         VO Dropped: https://mpv.io/manual/master/#command-interface-vo-drop-frame-count
         Mistimed:   https://mpv.io/manual/master/#command-interface-mistimed-frame-count
-        VO Delayed:    https://mpv.io/manual/master/#command-interface-vo-delayed-frame-count
+        VO Delayed: https://mpv.io/manual/master/#command-interface-vo-delayed-frame-count
     
     Video output performance:
         upload:  https://mpv.io/manual/master/#command-interface-upload
@@ -67,7 +67,7 @@ function perfstats()
         "{\\fs" .. font_size .. "}Frames:\\NDropped\\h" .. mp.get_property("drop-frame-count") ..
         "\\NVO Dropped:\\h" .. mp.get_property("vo-drop-frame-count") ..
         "\\NMistimed:\\h" .. mp.get_property("mistimed-frame-count") ..
-        "\\NDelayed:\\h" .. mp.get_property("vo-delayed-frame-count") ..
+        "\\NVO Delayed:\\h" .. mp.get_property("vo-delayed-frame-count") ..
         "\\N_________\\NVideo output performance (last frame):\\Nupload:\\h" ..
         uplast ..
         "μs\\Nrender:\\h" .. rendlast ..

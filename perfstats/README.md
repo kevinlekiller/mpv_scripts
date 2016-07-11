@@ -10,7 +10,7 @@ Default keybinding is ` (the key under Escape on US keyboards).
         Mistimed:   https://mpv.io/manual/master/#command-interface-mistimed-frame-count
         VO Delayed: https://mpv.io/manual/master/#command-interface-vo-delayed-frame-count
 
-    Video output performance:
+    Video output performance (does not seem to function with the angle backend):
         upload:  https://mpv.io/manual/master/#command-interface-upload
         render:  https://mpv.io/manual/master/#command-interface-render
         present: https://mpv.io/manual/master/#command-interface-present

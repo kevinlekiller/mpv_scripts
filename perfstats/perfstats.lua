@@ -15,7 +15,9 @@
         present: https://mpv.io/manual/master/#command-interface-present
         Total:   Combined amount of time of the above 3 (this should stay lower than
                  your display frame time, if it goes higher, you will want to tweak
-                 mpv settings).
+                 mpv settings, however this probably depends on the fps of the video,
+                 if the video is 30fps and the display is 60hz, then you probably get
+                 2x more time to work on a frame since the same frame is displayed twice).
         
         last:    How much time it took for the last frame; https://mpv.io/manual/master/#command-interface-last
         average: How much time it took for the last few frames; https://mpv.io/manual/master/#command-interface-avg

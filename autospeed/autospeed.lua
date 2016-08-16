@@ -3,7 +3,7 @@
     
     Valid --script-opts are (they are all optional):
     autospeed-xrandr=false     true/false - Use xrandr to change display refresh rate?.
-    autospeed-speed=true       true/false - Adjust speed of the video?
+    autospeed-speed=false      true/false - Adjust speed of the video?
     autospeed-display=HDMI1               - Use specified xrandr display, find with xrandr -q, if set to "auto", uses the primary monitor.
     autospeed-exitmode=0x48               - Changes the monitor mode (refresh rate) when exiting mpv.
                                             autospeed-exitmode=false Don't change the mode when exiting. If autospeed-exitmode is not set, this is the default.
@@ -23,7 +23,7 @@
     autospeed-spause           true/false - Pause video while switching display modes.
                                Number     - If you set this a number, it will pause for that amount of seconds.
 
-    Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
+    Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=false,autospeed-minspeed=0.8
 --]]
 --[[
     Copyright (C) 2015  kevinlekiller
@@ -71,7 +71,7 @@ end
 function getOptions()
     _global.options = {
         ["xrandr"]     = false,
-        ["speed"]      = true,
+        ["speed"]      = false,
         ["display"]    = "auto",
         ["exitmode"]   = "auto",
         ["interlaced"] = false,

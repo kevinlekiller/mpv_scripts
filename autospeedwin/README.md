@@ -12,8 +12,9 @@
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
-* It (adjusting the monitor refresh rate works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
-  You should not use --video-sync=display-resample and autospeed-speed=true at the same time.
+* Works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync)  
+If using mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync), do not use `autospeed-speed=true`  
+If you have issues with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync), you can use `--video-sync=audio` and `autospeed-speed=true`, which still produces acceptable results.  
 
 --------------
 
@@ -35,8 +36,8 @@ Valid options (and examples):
     autospeed-nircmd=false
         true/false - Use nircmd to change the refresh rate of your monitor.
         nircmd will be used to change the refresh rate of your monitor based on options listed below.
-    autospeed-speed=true
-        Default: true
+    autospeed-speed=false
+        Default: false
         true/false - Adjust speed of the video?
         If set to true, the mpv speed setting will be changed based on the video
         fps and display refresh rate.
@@ -108,9 +109,9 @@ Valid options (and examples):
     
     Examples:
         Setting the options at the command line:
-            mpv file.mkv --script-opts=autospeed-estfps=true,autospeed-minspeed=0.8
+            mpv file.mkv --script-opts=autospeed-speed=true,autospeed-estfps=true,autospeed-minspeed=0.8
         Setting the options in %APPDATA%\mpv\mpv.conf:
-            script-opts=autospeed-nircmd=true,autospeed-speed=true,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=4
+            script-opts=autospeed-nircmd=true,autospeed-speed=false,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=false,autospeed-spause=4
 
 --------------
 

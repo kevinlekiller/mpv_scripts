@@ -3,7 +3,7 @@
     
     Valid --script-opts are (they are all optional):
     autospeed-nircmd=false      true/false - Use nircmd to change the refresh rate of your monitor.
-    autospeed-speed=true        true/false - Adjust speed of the video?.
+    autospeed-speed=false       true/false - Adjust speed of the video?.
     autospeed-nircmdc="nircmdc" String     - Path to nircmdc executable file. If not set, nircmdc will be searched in Windows PATH variable.
     autospeed-dwidth=1920       Number     - Display width.
     autospeed-dheight=1080      Number     - Display height.
@@ -68,7 +68,7 @@ end
 function getOptions()
     _global.options = {
         ["nircmd"]    = false,
-        ["speed"]     = true,
+        ["speed"]     = false,
         ["nircmdc"]   = "nircmdc",
         ["dwidth"]    = 1920,
         ["dheight"]   = 1080,

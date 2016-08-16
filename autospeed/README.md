@@ -12,10 +12,9 @@
 
 * By default mpv will adjust the audio pitch to match the speed difference. You can read the [mpv manual](http://mpv.io/manual/master/#options-audio-pitch-correction) for more information on this.
 
-* It (adjusting the monitor refresh rate) works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync).  
-If your videos stutter with `--video-sync=display-resample` and autospeed, this is possibly due to a vsync timing issue, which can be caused the compositor you use. I've switched my compositor to [compton](https://github.com/chjj/compton) with `--vsync opengl-swc --backend glx` options which solved the issue.  
-You can use `--video-sync=audio` which still produces acceptable results.  
-You should not use `--video-sync=display-resample` and `autospeed-speed=true` at the same time.
+* Works better with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync)  
+If using mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync), do not use `autospeed-speed=true`  
+If you have issues with mpv's [`--video-sync=display-resample`](https://mpv.io/manual/master/#options-video-sync), you can use `--video-sync=audio` and `autospeed-speed=true`, which still produces acceptable results.  
 
 --------------
 
@@ -39,8 +38,8 @@ Valid options (and examples):
         true/false - Use xrandr.
         Xrandr will be used to change the refresh rate of your monitor based on available
         refresh rates for the current resolution.
-    autospeed-speed=true
-        Default: true
+    autospeed-speed=false
+        Default: false
         true/false - Adjust speed of the video?
         If set to true, the mpv speed setting will be changed based on the video
         fps and display refresh rate.
@@ -102,7 +101,7 @@ Valid options (and examples):
         This follows the same standard as mpv's input.conf for keybindgs.
         Key to press to show the OSD.
         Pressing this key will display autospeed information on mpv's OSD.
-    autospeed-estfps=true
+    autospeed-estfps=false
         Default: false
         true/false - Calculate/change speed if a video has a variable frame rate 
                      at the cost of higher CPU usage.
@@ -129,9 +128,9 @@ Valid options (and examples):
     
     Examples:
         Setting the options at the command line:
-            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-minspeed=0.8
+            mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=false,autospeed-minspeed=0.8
         Setting the options in ~/.config/mpv/mpv.conf :
-            script-opts=autospeed-xrandr=true,autospeed-speed=true,autospeed-display=auto,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=4
+            script-opts=autospeed-xrandr=true,autospeed-speed=false,autospeed-display=auto,autospeed-exitmode=auto,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=true,autospeed-spause=4
 
 --------------
 

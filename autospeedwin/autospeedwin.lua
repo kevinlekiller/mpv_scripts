@@ -280,7 +280,7 @@ function start()
     if not (_global.confSpeed) then
         _global.confSpeed = mp.get_property_native("speed")
     end
-    local test = mp.get_property("fps")
+    local test = mp.get_property("container-fps")
     if (test == nil or test == "nil property unavailable") then
         if (_global.options["estfps"] ~= true) then
             return
@@ -291,7 +291,7 @@ function start()
         end
         mp.observe_property("estimated-vf-fps", "number", main)
     else
-        mp.observe_property("fps", "number", main)
+        mp.observe_property("container-fps", "number", main)
     end
     mp.add_key_binding(_global.options["osdkey"], mp.get_script_name(), osdEcho, {repeatable=true})
     if (_global.options["nircmd"] == true and _global.options["exitrate"] > 0) then

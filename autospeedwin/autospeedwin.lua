@@ -192,8 +192,8 @@ function findRefreshRate()
     end
     local round_fps = round(_global.temp["fps"])
     if (_global.temp["maxrate"] == nil) then
+        _global.temp["maxrate"] = 0
         for rate in string.gmatch(_global.options["rates"], "[%w.]+") do
-            _global.temp["maxrate"] = 0
             rate = tonumber(rate)
             if (rate > _global.temp["maxrate"]) then
                 _global.temp["maxrate"] = rate

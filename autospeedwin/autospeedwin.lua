@@ -271,7 +271,7 @@ function setRate(rate)
 				[2] = "-n",
 				[3] = _global.options["spause"],
 				[4] = "localhost",
-				[5] = ">"
+				[5] = ">",
 				[6] = "NUL"
 			}
 		})
@@ -285,7 +285,7 @@ function setRate(rate)
 				[2] = "-n",
 				[3] = "2",
 				[4] = "localhost",
-				[5] = ">"
+				[5] = ">",
 				[6] = "NUL"
 			}
 		})

@@ -263,10 +263,32 @@ function setRate(rate)
         }
     })
     if (_global.options["spause"] > 0 and paused ~= "yes") then
-		os.execute("ping -n " .. _global.options["spause"] .. " localhost > NUL")
+		--os.execute("ping -n " .. _global.options["spause"] .. " localhost > NUL")
+		_global.utils.subprocess({
+			["cancellable"] = false,
+			["args"] = {
+				[1] = "ping",
+				[2] = "-n",
+				[3] = _global.options["spause"],
+				[4] = "localhost",
+				[5] = ">"
+				[6] = "NUL"
+			}
+		})
         mp.set_property("pause", "no")
     end
-	os.execute("ping -n 2 localhost > NUL")
+	--os.execute("ping -n 2 localhost > NUL")
+	_global.utils.subprocess({
+			["cancellable"] = false,
+			["args"] = {
+				[1] = "ping",
+				[2] = "-n",
+				[3] = "2",
+				[4] = "localhost",
+				[5] = ">"
+				[6] = "NUL"
+			}
+		})
     _global.temp["drr"] = mp.get_property_native("display-fps")
     _global.rateCache[_global.temp["drr"]] = rate
     _global.lastDrr = _global.temp["drr"]

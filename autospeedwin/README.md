@@ -58,13 +58,13 @@ Valid options (and examples):
         This will be sent to nircmd when setting the refresh rate.
     autospeed-rates="60"
         String - String of refresh rates your monitor supports and you want
-            to use, separated by commas. Nircmd seems to prefer rounded
+            to use, separated by semicolons. Nircmd seems to prefer rounded
             numbers, 72 instead of 71.92 for example.
         This is the list of refresh rates you want autospeed to use when it changes your monitor refresh rate.
-        Examples: autospeed-rates="60" | autospeed-rates="50,60,72"
+        Examples: autospeed-rates="60" | autospeed-rates="50;60;72"
         Note: If you want a rate to be prefered over another, for example the video is 24hz
-        and your rates are "100,120,144", but you want 144hz instead of 120hz for 24fps videos, change the
-        order to autospeed-rates="100,144,120", then 144hz will take precendence over 120hz.
+        and your rates are "100;120;144", but you want 144hz instead of 120hz for 24fps videos, change the
+        order to autospeed-rates="100;144;120", then 144hz will take precendence over 120hz.
     autospeed-exitrate=60
         Number - Which refresh rate to set when exiting mpv. Set to 0 to ignore.
         When mpv exits, if you want your monitor to go back to a specific refresh rate.
@@ -114,7 +114,7 @@ Valid options (and examples):
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-speed=true,autospeed-estfps=true,autospeed-minspeed=0.8
         Setting the options in %APPDATA%\mpv\mpv.conf:
-            script-opts=autospeed-nircmd=true,autospeed-speed=false,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60,72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=false,autospeed-spause=4
+            script-opts=autospeed-nircmd=true,autospeed-speed=false,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60;72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=false,autospeed-spause=4
 
 --------------
 

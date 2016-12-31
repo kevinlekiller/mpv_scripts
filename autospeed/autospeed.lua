@@ -12,8 +12,8 @@
     autospeed-interlaced=false true/false - Allow using a interlaced mode when switching refresh rates with xrandr?
     autospeed-mblacklist=false            - List of modes to blacklist.
                                             Modes in this list will be ignored.
-                                            If more than one mode is specified, seperate them by comma.
-                                            Example: autospeed-mblacklist="0x128,0x2fa"
+                                            If more than one mode is specified, seperate them by semicolon.
+                                            Example: autospeed-mblacklist="0x128;0x2fa"
     autospeed-minspeed=0.9     Number     - Minimum allowable speed to play video at.
     autospeed-maxspeed=1.1     Number     - Maximum allowable speed to play video at.
     autospeed-osd=true         true/false - Enable OSD.
@@ -114,7 +114,7 @@ function getOptions()
         _global.options["mblacklist"] = false
     else
         local tmp_blacklist = {}
-        for blacklist in string.gmatch(_global.options["mblacklist"], '[^,]+') do
+        for blacklist in string.gmatch(_global.options["mblacklist"], '[0-9a-zA-Z]+') do
             tmp_blacklist[blacklist] = true
         end
         _global.options["mblacklist"] = tmp_blacklist

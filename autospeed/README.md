@@ -73,9 +73,9 @@ Valid options (and examples):
     autospeed-mblacklist=false
         Default: false
         Modes in this list will be ignored. Find modes with xrandr --verbose
-        If more than one mode is specified, seperate them by comma.
+        If more than one mode is specified, seperate them by semicolon.
         Examples:
-            autospeed-mblacklist="0x128,0x2fa"
+            autospeed-mblacklist="0x128;0x2fa"
             autospeed-mblacklist=0x38d
     autospeed-minspeed=0.92
         Default: 0.9

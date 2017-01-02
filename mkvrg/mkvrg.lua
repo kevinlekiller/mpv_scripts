@@ -10,7 +10,7 @@
     For example : mpv --af=volume:replaygain-track:detach
     
     You can enable mkvrg.lua OSD messages in mpv by passing the script-opts
-    option mkvrg-osd=true, like this: mpv --script-ops=mkvrg-osd=true
+    option mkvrg-osd=true, like this: mpv --script-opts=mkvrg-osd=true
     
     These programs are required for this script to function:
     bs1770gain : http://bs1770gain.sourceforge.net/

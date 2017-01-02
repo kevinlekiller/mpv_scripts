@@ -19,7 +19,7 @@ This script is based on https://github.com/kevinlekiller/mkvrg which can be used
 ----
 #Options
 
-You can enable mkvrg.lua OSD messages in mpv by passing the script-opts option mkvrg-osd=true, like this: `mpv --script-ops=mkvrg-osd=true example.mkv`
+You can enable mkvrg.lua OSD messages in mpv by passing the script-opts option mkvrg-osd=true, like this: `mpv --script-opts=mkvrg-osd=true example.mkv`
 
 ----
 #Requirements:

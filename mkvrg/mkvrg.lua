@@ -165,6 +165,9 @@ local function process()
         msg.warn("Could not write replaygain tags to file with mkvpropedit.")
     end
     os.remove(tmppath)
+    local index = mp.get_property("playlist-pos")
+    mp.command("loadfile " .. path .. " append-play")
+    mp.command("playlist-remove " .. index)
 end
 
 local function start()

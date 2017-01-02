@@ -11,7 +11,7 @@
     Find your GPU with this command: nvidia-settings -q gpus
 --]]
 --[[
-    Copyright (C) 2015  kevinlekiller
+    Copyright (C) 2015-2017  kevinlekiller
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License

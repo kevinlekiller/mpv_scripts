@@ -9,6 +9,8 @@ Various scripts for [mpv](https://mpv.io/).
 
 [maximize](https://github.com/kevinlekiller/mpv_scripts/tree/master/maximize/): Keeps the mpv window maximized when not in fullscreen. (Windows)
 
+[mkvrg](https://github.com/kevinlekiller/mpv_scripts/tree/master/mkvrg/): Scans replaygain on mkv files with bs1770gain and applies with mkvpropedit.
+
 [perfstats](https://github.com/kevinlekiller/mpv_scripts/tree/master/perfstats/): Displays statistics on dropped frames and video output performance.
 
 [powermizer](https://github.com/kevinlekiller/mpv_scripts/tree/master/powermizer/): Sets max performance on Nvidia GPU's when starting mpv, sets back to adaptive when exiting. (*nix)

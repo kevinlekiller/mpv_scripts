@@ -26,7 +26,7 @@
     Example: mpv file.mkv --script-opts=autospeed-xrandr=true,autospeed-speed=false,autospeed-minspeed=0.8
 --]]
 --[[
-    Copyright (C) 2015  kevinlekiller
+    Copyright (C) 2015-2017  kevinlekiller
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License

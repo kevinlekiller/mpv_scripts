@@ -31,7 +31,7 @@
     https://github.com/kevinlekiller/mpv_scripts
 --]]
 --[[
-    Copyright (C) 2016  kevinlekiller
+    Copyright (C) 2016-2017  kevinlekiller
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2

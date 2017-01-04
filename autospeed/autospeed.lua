@@ -212,11 +212,11 @@ function findRefreshRate()
     if (_global.options["xrandr"] ~= true or getXrandrModes() == false) then
         return
     end
-    local round_fps = round(_global.temp["fps"])
     -- If the current monitor rate is already a multiple, don't change the mode.
-    if (round_fps <= _global.temp["drr"] and _global.temp["drr"] % round_fps == 0) then
+    if (_global.temp["fps"] <= _global.temp["drr"] and _global.temp["drr"] % _global.temp["fps"] == 0) then
         return
     end
+    local round_fps = round(_global.temp["fps"])
     local iterator = 1
     if (_global.temp["maxclock"] > round_fps) then
         iterator = round(_global.temp["maxclock"] / round_fps)

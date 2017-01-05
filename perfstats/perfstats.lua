@@ -29,6 +29,11 @@
     Frame time:
         This is how much time your computer monitor spends displaying a single frame.
     
+    Frame rate:
+        Reported video fps by mpv.
+    Frame time:
+        How long in time a single frame of the video is.
+    
     Note: All time measurements are in microseconds.
     
     https://github.com/kevinlekiller/mpv_scripts
@@ -101,6 +106,11 @@ function perfstats()
     local prop = mp.get_property("display-fps")
     if (prop ~= nil) then
         out = out .. "_________\\NDisplay information:\\NRefresh rate:\\h" .. prop .. "Hz\\N"
+        out = out .. "Frame time:\\h" .. (1000000 / prop) .. "μs\\N"
+    end
+    prop = mp.get_property("container-fps")
+    if (prop ~= nil) then
+        out = out .. "_________\\NVideo information:\\NFrame rate:\\h" .. prop .. "fps\\N"
         out = out .. "Frame time:\\h" .. (1000000 / prop) .. "μs\\N"
     end
     mp.osd_message(out .. osdt, osd_time)

@@ -23,8 +23,11 @@ Default keybinding is ` (the key under Escape on US keyboards).
         last:    How much time it took for the last frame; https://mpv.io/manual/master/#command-interface-last
         average: How much time it took for the last few frames; https://mpv.io/manual/master/#command-interface-avg
                  Note: Wait 5 to 10 seconds at the start of a video for the average to settle.
+        peak:    The highest amount of time it took to display a frame; https://mpv.io/manual/master/#command-interface-peak
 
-    Maximum display frame time:
+    Refresh rate:
+        How many times per second your monitor displays a new frame.
+    Frame time:
         This is how much time your computer monitor spends displaying a single frame.
 
     Note: All time measurements are in microseconds.

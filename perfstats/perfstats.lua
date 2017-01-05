@@ -22,8 +22,11 @@
         last:    How much time it took for the last frame; https://mpv.io/manual/master/#command-interface-last
         average: How much time it took for the last few frames; https://mpv.io/manual/master/#command-interface-avg
                  Note: Wait 5 to 10 seconds at the start of a video for the average to settle.
+        peak:    The highest amount of time it took to display a frame; https://mpv.io/manual/master/#command-interface-peak
     
-    Maximum display frame time:
+    Refresh rate:
+        How many times per second your monitor displays a new frame.
+    Frame time:
         This is how much time your computer monitor spends displaying a single frame.
     
     Note: All time measurements are in microseconds.
@@ -55,35 +58,47 @@ local osd_time = 8
 -------------------------------------------------------------------------------------
 local osdh = mp.get_property_osd("osd-ass-cc/0")
 local osdt = mp.get_property_osd("osd-ass-cc/1")
+local msg = require 'mp.msg'
+local properties0 = {
+    ["Dropped"]     = "drop-frame-count",
+    ["VO Dropped:"] = "vo-drop-frame-count",
+    ["Mistimed:"]   = "mistimed-frame-count",
+    ["VO Delayed:"] = "vo-delayed-frame-count"
+}
+local properties1 = {
+    ["render"]  = "vo-performance/render-",
+    ["upload"]  = "vo-performance/upload-",
+    ["present"] = "vo-performance/present-",
+}
 function perfstats()
-    local uplast = mp.get_property("vo-performance/upload-last")
-    if (uplast == nil or uplast == "nil property unavailable") then
-        return
+    local out = osdh .. "{\\fs" .. font_size .. "}Frames:\\N"
+    for key,property in pairs(properties0) do
+        local prop = mp.get_property(property)
+        if (prop == nil) then
+            msg.warn("Got a nil value from mpv for property : " .. property)
+            return
+        end
+        out = out .. key .. "\\h" .. prop .."\\N"
     end
-    local rendlast = mp.get_property("vo-performance/render-last")
-    local preslast = mp.get_property("vo-performance/present-last")
-    local upavg = mp.get_property("vo-performance/upload-avg")
-    local rendavg = mp.get_property("vo-performance/render-avg")
-    local presavg = mp.get_property("vo-performance/present-avg")
-    mp.osd_message(osdh ..
-        "{\\fs" .. font_size .. "}Frames:\\NDropped\\h" .. mp.get_property("drop-frame-count") ..
-        "\\NVO Dropped:\\h" .. mp.get_property("vo-drop-frame-count") ..
-        "\\NMistimed:\\h" .. mp.get_property("mistimed-frame-count") ..
-        "\\NVO Delayed:\\h" .. mp.get_property("vo-delayed-frame-count") ..
-        "\\N_________\\NVideo output performance (last frame):\\Nupload:\\h" ..
-        uplast ..
-        "μs\\Nrender:\\h" .. rendlast ..
-        "μs\\Npresent:\\h" .. preslast ..
-        "μs\\NTotal:\\h" .. (uplast + rendlast + preslast) ..
-        "μs\\N_________\\NVideo output performance (averaged):\\Nupload:\\h" ..
-        upavg ..
-        "μs\\Nrender:\\h" .. rendavg ..
-        "μs\\Npresent:\\h" .. presavg ..
-        "μs\\NTotal:\\h" .. (upavg + rendavg + presavg) ..
-        "μs\\N_________\\NMaximum display frame time:\\N" ..
-        (1000000 / mp.get_property("display-fps")) .. "μs\\N" ..
-        osdt,
-        osd_time
-    )
+    for key,property in pairs(properties1) do
+        local total = 0
+        out = out .. "_________\\NVideo output performance (" .. key .. "):\\N"
+        for k,name in ipairs({"last", "avg", "peak"}) do
+            local prop = mp.get_property(properties1[key] .. name)
+            if (prop == nil) then
+                msg.warn("Got a nil value from mpv for property : " .. properties1[k] .. name)
+                return
+            end
+            total = total + prop
+            out = out .. name .. ":\\h" .. prop .. "μs\\N"
+        end
+        out = out .. "total:\\h" .. total .. "μs\\N"
+    end
+    local prop = mp.get_property("display-fps")
+    if (prop ~= nil) then
+        out = out .. "_________\\NDisplay information:\\NRefresh rate:\\h" .. prop .. "Hz\\N"
+        out = out .. "Frame time:\\h" .. (1000000 / prop) .. "μs\\N"
+    end
+    mp.osd_message(out .. osdt, osd_time)
 end
 mp.add_key_binding(keybinding, mp.get_script_name(), perfstats, {repeatable=true})

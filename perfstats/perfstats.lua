@@ -10,8 +10,8 @@
         VO Delayed: https://mpv.io/manual/master/#command-interface-vo-delayed-frame-count
     
     Video output performance (does not seem to function with the angle backend):
-        upload:  https://mpv.io/manual/master/#command-interface-upload
         render:  https://mpv.io/manual/master/#command-interface-render
+        upload:  https://mpv.io/manual/master/#command-interface-upload
         present: https://mpv.io/manual/master/#command-interface-present
         Total:   Combined amount of time of the above 3 (this should stay lower than
                  your display frame time, if it goes higher, you will want to tweak
@@ -66,9 +66,9 @@ local properties0 = {
     ["VO Delayed:"] = "vo-delayed-frame-count"
 }
 local properties1 = {
-    ["render"]  = "vo-performance/render-",
-    ["upload"]  = "vo-performance/upload-",
-    ["present"] = "vo-performance/present-",
+    "render",
+    "upload",
+    "present",
 }
 function perfstats()
     local out = osdh .. "{\\fs" .. font_size .. "}Frames:\\N"
@@ -81,16 +81,17 @@ function perfstats()
         out = out .. key .. "\\h" .. prop .."\\N"
     end
     local totals = {["avg"] = 0, ["last"] = 0, ["peak"] = 0}
-    for key,property in pairs(properties1) do
-        out = out .. "_________\\NVideo output performance (" .. key .. "):\\N"
-        for k,name in ipairs({"last", "avg", "peak"}) do
-            local prop = mp.get_property(properties1[key] .. name)
+    for key,property in ipairs(properties1) do
+        local propname = "vo-performance/" .. property .. "-"
+        out = out .. "_________\\NVideo output performance (" .. property .. "):\\N"
+        for k,name in pairs(totals) do
+            local prop = mp.get_property(propname .. k)
             if (prop == nil) then
-                msg.warn("Got a nil value from mpv for property : " .. properties1[key] .. name)
+                msg.warn("Got a nil value from mpv for property : " .. propname .. k)
                 return
             end
-            totals[name] = totals[name] + prop
-            out = out .. name .. ":\\h" .. prop .. "μs\\N"
+            totals[k] = totals[k] + prop
+            out = out .. k .. ":\\h" .. prop .. "μs\\N"
         end
     end
     out = out .. "_________\\NVideo output performance (total):\\N"

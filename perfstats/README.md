@@ -30,6 +30,11 @@ Default keybinding is ` (the key under Escape on US keyboards).
     Frame time:
         This is how much time your computer monitor spends displaying a single frame.
 
+    Frame rate:
+        Reported video fps by mpv.
+    Frame time:
+        How long in time a single frame of the video is.
+
     Note: All time measurements are in microseconds.
 
 Download link for the script: https://raw.githubusercontent.com/kevinlekiller/mpv_scripts/master/perfstats/perfstats.lua

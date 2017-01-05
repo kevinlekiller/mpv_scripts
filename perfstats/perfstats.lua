@@ -80,19 +80,22 @@ function perfstats()
         end
         out = out .. key .. "\\h" .. prop .."\\N"
     end
+    local totals = {["avg"] = 0, ["last"] = 0, ["peak"] = 0}
     for key,property in pairs(properties1) do
-        local total = 0
         out = out .. "_________\\NVideo output performance (" .. key .. "):\\N"
         for k,name in ipairs({"last", "avg", "peak"}) do
             local prop = mp.get_property(properties1[key] .. name)
             if (prop == nil) then
-                msg.warn("Got a nil value from mpv for property : " .. properties1[k] .. name)
+                msg.warn("Got a nil value from mpv for property : " .. properties1[key] .. name)
                 return
             end
-            total = total + prop
+            totals[name] = totals[name] + prop
             out = out .. name .. ":\\h" .. prop .. "μs\\N"
         end
-        out = out .. "total:\\h" .. total .. "μs\\N"
+    end
+    out = out .. "_________\\NVideo output performance (total):\\N"
+    for key,total in pairs(totals) do
+        out = out .. key .. ":\\h" .. total .. "μs\\N"
     end
     local prop = mp.get_property("display-fps")
     if (prop ~= nil) then

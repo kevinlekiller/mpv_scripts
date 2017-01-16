@@ -19,3 +19,10 @@ Various scripts for [mpv](https://mpv.io/).
 #License:
 
 https://github.com/kevinlekiller/mpv_scripts/blob/master/LICENSE
+
+----
+#Donations
+
+BTC: 17cMHRkoRyCmixEMoWuudhXzFimYe9r49k  
+ETH: 0x5B06DC68dBD806869B115ef18668F66520c06698  
+XMR: 485KKqeDHk9QcsCw5rpL9L6DymkV3Ph69jGxogSzX1QAccFxqCqJ1UtDXac2SA3taNB9DJSWqCDNcTdAkuhnaExfDd6Acmm

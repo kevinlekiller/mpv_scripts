@@ -47,6 +47,9 @@ Valid options (and examples):
         If not set, nircmdc will be searched in Windows PATH variable.
         If you set this "" or "nircmdc", Windows will look in your PATH for nircmdc,
         otherwise you can specify a path, for example "c:\programs\nircmdc.exe"
+    autospeed-monitor=0
+        Number - Which monitor (display) to set the refresh rate on.
+        This will be sent to nircmd when setting the refresh rate.
     autospeed-dwidth=1920
         Number - Display width.
         This will be sent to nircmd when setting the refresh rate.
@@ -114,7 +117,7 @@ Valid options (and examples):
         Setting the options at the command line:
             mpv file.mkv --script-opts=autospeed-speed=true,autospeed-estfps=true,autospeed-minspeed=0.8
         Setting the options in %APPDATA%\mpv\mpv.conf:
-            script-opts=autospeed-nircmd=true,autospeed-speed=false,autospeed-nircmdc="nircmdc",autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60;72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=false,autospeed-spause=4
+            script-opts=autospeed-nircmd=true,autospeed-speed=false,autospeed-nircmdc="nircmdc",autospeed-monitor=0,autospeed-dwidth=1920,autospeed-dheight=1080,autospeed-bdepth=32,autospeed-rates="60;72",autospeed-exitrate=60,autospeed-minspeed=0.9,autospeed-maxspeed=1.1,autospeed-osd=true,autospeed-osdtime=10,autospeed-osdkey=y,autospeed-estfps=false,autospeed-spause=4
 
 --------------
 

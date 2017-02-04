@@ -5,6 +5,7 @@
     autospeed-nircmd=false      true/false - Use nircmd to change the refresh rate of your monitor.
     autospeed-speed=false       true/false - Adjust speed of the video?.
     autospeed-nircmdc="nircmdc" String     - Path to nircmdc executable file. If not set, nircmdc will be searched in Windows PATH variable.
+    autospeed-monitor=0         Number     - Which monitor (display) to set the refresh rate on.
     autospeed-dwidth=1920       Number     - Display width.
     autospeed-dheight=1080      Number     - Display height.
     autospeed-bdepth=32         Number     - Display bit depth.
@@ -73,6 +74,7 @@ function getOptions()
         ["nircmd"]    = false,
         ["speed"]     = false,
         ["nircmdc"]   = "nircmdc",
+        ["monitor"]   = 0,
         ["dwidth"]    = 1920,
         ["dheight"]   = 1080,
         ["bdepth"]    = 32,
@@ -91,7 +93,7 @@ function getOptions()
         if (opt ~= nil) then
             if ((key == "nircmd" or key == "speed" or key == "osd" or key == "estfps") and opt == "true") then
                 _global.options[key] = true
-            elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime" or key == "dwidth" or key == "dheight" or key == "bdepth" or key == "exitrate" or key == "spause") then
+            elseif (key == "minspeed" or key == "maxspeed" or key == "osdtime" or key == "monitor" or key == "dwidth" or key == "dheight" or key == "bdepth" or key == "exitrate" or key == "spause") then
                 local test = tonumber(opt)
                 if (test ~= nil) then
                     _global.options[key] = test
@@ -256,10 +258,11 @@ function setRate(rate)
         ["args"] = {
             [1] = _global.options["nircmdc"],
             [2] = "setdisplay",
-            [3] = _global.options["dwidth"],
-            [4] = _global.options["dheight"],
-            [5] = _global.options["bdepth"],
-            [6] = rate
+            [3] = "monitor:" .. _global.options["monitor"],
+            [4] = _global.options["dwidth"],
+            [5] = _global.options["dheight"],
+            [6] = _global.options["bdepth"],
+            [7] = rate
         }
     })
     if (_global.options["spause"] > 0 and paused ~= "yes") then
@@ -326,10 +329,11 @@ function start()
                 ["args"] = {
                     [1] = _global.options["nircmdc"],
                     [2] = "setdisplay",
-                    [3] = _global.options["dwidth"],
-                    [4] = _global.options["dheight"],
-                    [5] = _global.options["bdepth"],
-                    [6] = _global.options["exitrate"]
+                    [3] = "monitor:" .. _global.options["monitor"],
+                    [4] = _global.options["dwidth"],
+                    [5] = _global.options["dheight"],
+                    [6] = _global.options["bdepth"],
+                    [7] = _global.options["exitrate"]
                 }
             })
         end

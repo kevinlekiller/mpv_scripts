@@ -5,8 +5,8 @@
 Default keybinding is ` (the key under Escape on US keyboards).
 
     Frames:
-        Dropped:    https://mpv.io/manual/master/#command-interface-drop-frame-count
-        VO Dropped: https://mpv.io/manual/master/#command-interface-vo-drop-frame-count
+        Dropped:    https://mpv.io/manual/master/#command-interface-decoder-frame-drop-count
+        VO Dropped: https://mpv.io/manual/master/#command-interface-frame-drop-count
         Mistimed:   https://mpv.io/manual/master/#command-interface-mistimed-frame-count
         VO Delayed: https://mpv.io/manual/master/#command-interface-vo-delayed-frame-count
 

@@ -16,13 +16,13 @@ Various scripts for [mpv](https://mpv.io/).
 [powermizer](https://github.com/kevinlekiller/mpv_scripts/tree/master/powermizer/): Sets max performance on Nvidia GPU's when starting mpv, sets back to adaptive when exiting. (*nix)
 
 ----
-#License:
+## License:
 
 https://github.com/kevinlekiller/mpv_scripts/blob/master/LICENSE
 
 ----
-#Donations
-
-BTC: 17cMHRkoRyCmixEMoWuudhXzFimYe9r49k  
-ETH: 0x5B06DC68dBD806869B115ef18668F66520c06698  
-XMR: 485KKqeDHk9QcsCw5rpL9L6DymkV3Ph69jGxogSzX1QAccFxqCqJ1UtDXac2SA3taNB9DJSWqCDNcTdAkuhnaExfDd6Acmm
+## Donations
+Bitcoin: 38XZrqgXc9sE2YnWtfXz8QFf9XnDND3RKm  
+Ethereum: 0x36374ea9cC3B33BCC9267be9e18a81AABAf98bEf  
+Litecoin: MM49Vu3jQ1S8b8H9FrCJ1wgQHKSBidwtWZ  
+Zcash: t1YUxEy9R2j9FW3ci3HWyKZEVUvdH5nyDAW
